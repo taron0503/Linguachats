@@ -1,0 +1,75 @@
+.user_row{
+	font-size: 15px;
+	font-weight: 400;
+    line-height: 1.4;
+  padding: 8px;
+  cursor:pointer;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.user_row:nth-child(odd){
+  background:rgb(239,239,239) 
+}
+
+.user_row:hover{
+  background-color: rgb(219,240,255)
+}
+
+.male{
+  color:rgb(115,143,190);
+}
+
+.female{
+  color:rgb(193,128,166);
+}
+
+.chaticon{
+	float:right;
+	margin: 0 10px 5px;
+	position: absolute;
+	right:0px;
+	bottom: 0px;
+}
+
+.chaticon img{
+	width:20px;
+}
+
+.newMessageIcon{
+	position: absolute;
+	left:13px;
+	width:15px;
+	height: 15px;
+	float: right;
+	background-color: red;
+	border-radius: 50%;
+	text-align: center;
+	color: white;
+	font-size: 11px;
+	font-weight: bold; 
+}
+
+.user_data{
+	font-size: 14px;
+	margin-right: 4px; 
+}
+
+.user_data_label{
+	color: rgba(153, 153, 153, 1);
+  font-size: 14px;
+  font-weight: 400;
+  height: 18px;
+  margin-right: 2px;
+}
+
+.avatar-wrapper{
+	width:50px;
+	margin-left: 15px;
+}
+
+.avatar{
+	width:50px;
+	height: 50px;
+	border-radius: 50%;
+}

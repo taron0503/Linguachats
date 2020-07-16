@@ -1,0 +1,37 @@
+.type_msg_wrapper{
+	width:80%;
+	margin: 5px;
+}
+
+.type_msg{
+	min-height: 50px;
+	max-height: 150px;
+	overflow: auto;
+	margin:0; 
+	outline:none;
+	resize: none;
+	border:none;
+	border-radius: 10px;
+	padding: 5px;
+	width:90%;
+}
+
+.messButtonsWrapper{
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#send_button{
+	border-radius: 30px;
+}
+
+.ContentEditable{
+	outline: none;
+	max-height: 150px;
+	font-size: 15px;
+	overflow: auto;
+	background: rgba(0,0,0,0.1);
+    padding: 5px 15px;
+    border-radius: 15px;
+}

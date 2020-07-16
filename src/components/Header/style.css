@@ -1,0 +1,7 @@
+.nav-link:target{
+	color:green;
+}
+
+.nav-link{
+	color:red;
+}

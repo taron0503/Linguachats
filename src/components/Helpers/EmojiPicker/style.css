@@ -1,0 +1,25 @@
+.EmojiPickerModal{
+	position: absolute;
+	background:white;
+	display: flex;
+	flex-wrap: wrap;
+	overflow: auto;
+	top:-190px;
+	left:-138px;
+	height: 190px;
+	width: 163px;
+	border:1px solid rgb(209,209,209);
+	border-radius: 10px;
+}
+
+.emoji-icon{
+	/*background-size:330px 253px;*/
+	margin: 2.5px;
+	width:20px;
+	height:20px;
+	cursor:pointer;
+}
+
+.EmojiPicker{
+	position: relative;
+}
