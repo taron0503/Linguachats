@@ -19,3 +19,11 @@
     border-left: .3em solid transparent;
     box-sizing:border-box;
 }
+
+.dropdown_menu_center {
+    right: auto!important;
+    left: 50%!important;
+    -webkit-transform: translate(-50%, 0)!important;
+    -o-transform: translate(-50%, 0)!important;
+    transform: translate(-50%, 0)!important;
+}

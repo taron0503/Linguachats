@@ -1,6 +1,14 @@
 import React, {Component} from "react"
 import Header from "./Header"
 import InitialRegModal from "./InitialRegModal"
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect 
+} from "react-router-dom";
+import TextChat from './TextChat';
+import VoiceChat from './VoiceChat';
 import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
@@ -72,7 +80,28 @@ class Main extends Component{
 		// console.log(this.props)
 		return (
 			<React.Fragment>
-			  <Header user={this.props.user}/>
+			  <div className="container-fluid TextChat">
+				  <div className="row no-gutter">
+				    <div className="col-sm-2">
+				      <Header user={this.props.user}/>
+				    </div>
+				    <div className="col-sm-10">
+					    <Switch>
+				          <Route path="/TextChat">
+				            <TextChat />
+				          </Route>
+				          <Route path="/VoiceChat">
+				            <VoiceChat />
+				          </Route>
+				          <Route path="/">
+				            <Redirect to="/TextChat" />
+				          </Route>  
+				      </Switch>
+				    </div>
+				  </div>
+			  </div>
+			  
+			  
 			  <InitialRegModal show = {this.props.InitReg.show}
 			  				   edit = {this.props.InitReg.edit} 
 			  				   handleModalConfirmation={handleModalConfirmation}

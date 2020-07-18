@@ -4,6 +4,7 @@ let initialstate = {users:users,
 					//partner:null,
 					user:user,
 					InitReg:{show:false,edit:false},
+          UsersWindow:{show:true}
           }
 
 
@@ -63,6 +64,10 @@ const main_reducer = (state = initialstate, action) => {
       let InitReg = {...state.InitReg}
       InitReg.edit = edit
       return {...state,InitReg:InitReg};
+    }
+    case "toggleUsersWindow":{
+      let show = action.show
+      return {...state,UsersWindow:{show:show}}
     }
     case "addMessage":{
       let msg = action.msg

@@ -21,7 +21,7 @@ export default class InitialRegModal extends Component{
     }
 
 	showModal=()=>{
-		console.log("open")
+		// console.log("open")
 		if(this.props.EmojiPicker_show){
 			this.props.hide()
 		}else{

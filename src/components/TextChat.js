@@ -1,6 +1,7 @@
 import React, {Component} from "react"
 import UsersWindow from "./UsersWindow"
 import MessagesWindow from "./MessagesWindow"
+import {isMobile} from "react-device-detect";
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
@@ -17,16 +18,17 @@ class TextChat extends Component{
 	}
 
 	render(){
+		console.log(isMobile)
 		let partner = this.props.partner
 		return (
 			<div className="container-fluid TextChat">
 			  <div className="row no-gutter">
 			    <div className="col-sm-4">
-			      <UsersWindow/>
+			    {this.props.UsersWindow.show && <UsersWindow/>}
 			    </div>
 			    <div className="col-sm-8">
 			    {partner?
-			      <MessagesWindow partner={partner}/>:<div>Find someone to talk</div>
+			      <MessagesWindow partner={partner}/>:<div className="EmptyMessageWindow">Find someone to talk</div>
 			    }
 			    </div>
 			  </div>
@@ -40,6 +42,7 @@ const mapStateToProps = (state) => {
 	state = state.main_reducer
 	let partner = state.users.find(user=>user.socketid==state.user.partnerId)
   return {
+  	UsersWindow:state.UsersWindow,
     partner:partner,
     users:state.users,
   };

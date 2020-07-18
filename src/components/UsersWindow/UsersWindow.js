@@ -37,18 +37,6 @@ class UsersWindow extends Component{
 
 				<div className="container-fluid TextChatUsers Cscroll">
 				  <div className="row usersTable_header sticky-top">
-				   {/* <div className="col-sm-4">
-				      Name
-				    </div>*/}
-				    {/*<div className="col-sm-2">
-				      Country
-				    </div>*/}
-				    {/*<div className="col-sm-3">
-				      Speaks
-				    </div>
-				    <div className="col-sm-3">
-				      Learns
-				    </div>*/}
 				  </div>
 
 				  {users.map((user,index)=>{

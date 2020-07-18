@@ -1,7 +1,9 @@
-.nav-link:target{
-	color:green;
+.full_height{
+	height:100vh;
 }
 
-.nav-link{
-	color:red;
+.NavBarHeader{
+	text-align: center;
+	margin-bottom: 10px;
 }
+

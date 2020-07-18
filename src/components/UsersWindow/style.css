@@ -7,24 +7,25 @@
 	border-right: 1px solid rgb(229,229,229); 
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 84vh;
+	height: 95vh;
 }
 
 .chatWindow_header{
 	margin:0 15px; 
+	z-index: 600!important;
 }
 
 .chatWindow_header_item{
 	text-align:center;
 	padding:2%;
 	cursor: pointer;
-	background-color: rgb(59,108,191);
-	color:white;
+	background: rgb(226,230,233);
+	color:black;
 }
 
 .selected{
-	background: rgb(226,230,233);
-	color:black;
+	background-color: rgb(59,108,191);
+	color:white;
 }
 
 .usersTable_header div{

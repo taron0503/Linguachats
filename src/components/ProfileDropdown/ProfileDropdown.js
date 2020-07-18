@@ -2,6 +2,8 @@ import React, {Component} from "react"
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import {Dropdown} from 'react-bootstrap';
+import {isMobile} from "react-device-detect";
+import UserIcon from "../UserIcon";
 import styles from "./style.module.css"
 
 
@@ -33,10 +35,10 @@ class ProfileDropdown extends Component{
 	  return(
 			<Dropdown className={styles.user_profile}>
 			  <Dropdown.Toggle  id="dropdown-basic" as="div" style={{"cursor":"pointer"}}>
-			    {user?user.fullname:""}
+			    {isMobile?<UserIcon gender = {user.gender} size="25" img={user.img}/>:user.fullname}
 			  </Dropdown.Toggle>
 
-			  <Dropdown.Menu className="dropdown-menu-right">
+			  <Dropdown.Menu className={styles.dropdown_menu_center}>
 			    <Dropdown.Item onClick={this.handleEdit}>Edit</Dropdown.Item>
 			    {/*<Dropdown.Item>Register</Dropdown.Item>*/}
 			    <Dropdown.Item onClick={this.handleLogOut}>LogOut</Dropdown.Item>
@@ -49,7 +51,6 @@ class ProfileDropdown extends Component{
 const mapStateToProps = (state) => {
   state = state.main_reducer
   return {
-    user: state.user,
     showInitReg:state.showInitReg
   };
 };

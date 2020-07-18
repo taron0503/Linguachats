@@ -1,23 +1,27 @@
 import React, {Component} from "react"
-import female_avatar from "../../images/myAvatar.png"
+import UserIcon from "../UserIcon"
+import { connect } from 'react-redux';
+import * as actions from '../../actions';
+import {isMobile} from "react-device-detect";
 import "./style.css"
 
-export default class UsersItem extends Component{
+class UsersItem extends Component{
+	handleUserItemClick = ()=>{
+		let newPartner = this.props.newPartner
+		newPartner(this.props.user.socketid)
+		if(isMobile)
+			this.props.toggleUsersWindow(false)
+	}
 	render(){
 		let user = this.props.user
-		let newPartner = this.props.newPartner
-		let symbol = user.gender==="Male"?`\u2640`:`\u2642` 
-	    let imgsrc = user.gender==="Male"?"https://previews.123rf.com/images/yupiramos/yupiramos1609/yupiramos160912719/62358443-avatar-man-smiling-cartoon-male-person-user-vector-illustration.jpg":female_avatar
 		let gender_class = user.gender==="Male"?"male":"female"
 		let unread_messages = user.messages.reduce((count,message)=>{
 			return message.unread?count+1:count
 		},0)
 		return (
-	    		<div className="row no-gutter user_row" onClick={() => newPartner(user.socketid)} style={this.props.styles}>
+	    		<div className="row no-gutter user_row" onClick={this.handleUserItemClick} style={this.props.styles}>
 	    		    <div className="col-sm-2 col-2 ">
-		    		  <div className = "avatar-wrapper">	
-		    			<img className="avatar" src = {imgsrc}/>
-		   			  </div>
+		    		  <UserIcon gender={user.gender} size="50" img={user.img}/>
 	    			</div>
 	    		    <div className="col-10 col-sm-5">
 				      <div style={{"fontWeight":"600"}}>{/*symbol+" "+*/user.fullname}</div>
@@ -26,9 +30,6 @@ export default class UsersItem extends Component{
 				      <span className="user_data_label">Country:</span>
 				      <span className="user_data">{" "+user.country}</span>
 				    </div>
-				    {/*<div className="col-sm-2">
-				      {user.country}
-				    </div>*/}
 				    <div className="col-sm-5">
 				      <div>
 				      <span className="user_data_label">Speaks:</span>
@@ -48,3 +49,12 @@ export default class UsersItem extends Component{
 				)
 	}
 } 
+
+const mapStateToProps = (state) => {
+  state = state.main_reducer
+  return {
+    users: state.users,
+  };
+};
+
+export default connect(mapStateToProps,actions)(UsersItem)

@@ -55,7 +55,7 @@ class MessageBoard extends Component{
 		    var selection = document.getSelection();
 		    // if caret is at the begining of the text node (0), remove previous element
 		    if( selection && selection.anchorOffset == 0){
-		    	console.log(selection.anchorNode.previousSibling)
+		    	// console.log(selection.anchorNode.previousSibling)
 		    	if(selection.anchorNode.previousSibling){
 		          selection.anchorNode.previousSibling.parentNode.removeChild(selection.anchorNode.previousSibling)
 		    	}else if(selection.anchorNode.parentNode.previousSibling){
@@ -82,12 +82,12 @@ class MessageBoard extends Component{
 	}
 
   getEmojiIfOne(msg){
-  	console.log(msg)
+  	// console.log(msg)
   	let emojiSpan = msg.match(/^<span[^<]*<\/span>$/m)
   	if(emojiSpan){
   		let coords = emojiSpan[0].match(/.*\) ([^p]*)px ([^p]*)px/m)
   		let emoji = "emoji"+(-coords[1]/20)+(-coords[2]/20)
-  		console.log(emoji)
+  		//console.log(emoji)
   		return emoji
   	}
   	return
@@ -99,8 +99,9 @@ class MessageBoard extends Component{
 		if(!msg)
 			return
 		let emoji 
-		if(this.getEmojiIfOne(msg))
+		if(this.getEmojiIfOne(msg)){
 			emoji=this.getEmojiIfOne(msg)
+		}
 		let partner = this.props.partner
 		let socketid=partner.socketid
 		socket.emit('chat message', {msg:msg,socketid:socketid})
@@ -134,11 +135,11 @@ class MessageBoard extends Component{
           range.collapse(true);
           sel.removeAllRanges();
           sel.addRange(range);
-	      console.log(range)
+	      // console.log(range)
 	     // range.collapse(true)
 	      
 	      this.setState({msg:this.contentEditable.current.innerHTML,range:range})
-	      console.log(this.state.range)
+	      // console.log(this.state.range)
 	  	}
 	}
 

@@ -1,5 +1,7 @@
 import React, {Component} from "react"
 import { connect } from 'react-redux';
+import * as actions from '../../actions';
+import {isMobile} from "react-device-detect";
 import ScrollToBottom from '../Helpers/ScrollToBottom';
 import MessageBoard from '../MessageBoard'
 import {get_emoji_byName}  from '../Helpers/EmojiPicker'
@@ -13,7 +15,12 @@ class MessagesWindow extends Component{
 
 	closeChat=()=>{
 		socket.emit("left_chat",{user:this.props.user,partner:this.props.partner})
+		this.props.toggleUsersWindow(true)
 		// this.props.newPartner();
+	}
+
+	collapseChat=()=>{
+		this.props.toggleUsersWindow(true)
 	}
 
 	getEmojiIfOne(msg){
@@ -45,9 +52,14 @@ class MessagesWindow extends Component{
 			<div className="MessagesWindow">
 				<div className="MWheader">
 					{partner.name}
-					{partner.chat && <button type="button" className="close" aria-label="Close" onClick={this.closeChat}>
+					<button type="button" className="close" aria-label="Close" onClick={this.closeChat}>
 					  <span aria-hidden="true">&times;</span>
-					</button>}
+					</button>
+					{isMobile &&
+					<button type="button" className="collapseButton" onClick={this.collapseChat}>
+					  &minus;
+					</button>
+					}
 				</div>
 				<ScrollToBottom className="MWbody Cscroll">
 				{/*<br/>*/}
@@ -82,4 +94,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(MessagesWindow)
+export default connect(mapStateToProps,actions)(MessagesWindow)

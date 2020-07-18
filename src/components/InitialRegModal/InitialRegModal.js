@@ -1,5 +1,6 @@
 import React, {Component} from "react"
 import { connect } from 'react-redux';
+import * as actions from '../../actions';
 
 import Select from 'react-select'
 import {Modal,Button,InputGroup,FormControl,FormGroup} from 'react-bootstrap';
@@ -23,7 +24,11 @@ const selectStyles = {
 
 class InitialRegModal extends Component{
 	
-	handleClose = ()=>{}
+	handleClose = (resetForm)=>{
+		resetForm({})
+		this.props.toggleInitRegToEdit(false);
+		this.props.toggleInitReg(false);
+	}
 
 	handleLanguageOnChange(options,setFieldValue,field){
 		// console.log(options)
@@ -77,15 +82,19 @@ class InitialRegModal extends Component{
 				      onSubmit={(values, actions) => {
 				        // console.log(JSON.stringify(values, null, 2));
 				        values.fullname=values.name+" "+values.surname
+				        values.img = values.gender=="Male"?"avatarM.jpg":"avatarF.png"
 				        this.props.handleModalConfirmation(values)
 				        actions.resetForm({});
 				      }}
 				    >
-				    {({values,errors,touched,handleChange,handleBlur, isSubmitting, handleSubmit,setFieldValue})=>{/*console.log(values)*/;return(
+				    {({values,errors,touched,handleChange,handleBlur, isSubmitting, handleSubmit,setFieldValue,resetForm})=>{/*console.log(values)*/;return(
 				<Modal show={this.props.show} onHide={this.handleClose}>
 				          <form onSubmit={handleSubmit}>
 		        <Modal.Header>
 		          <Modal.Title>{this.props.edit?"Edit":"Register"}</Modal.Title>
+		          {this.props.edit && <button type="button" className="close" aria-label="Close" onClick={()=>{this.handleClose(resetForm)}}>
+							  <span aria-hidden="true">&times;</span>
+							</button>}
 		        </Modal.Header>
 		        <Modal.Body>
 		        	
@@ -212,8 +221,8 @@ const mapStateToProps = (state) => {
 	state = state.main_reducer
   return {
     user: state.user,
-    showInitReg:state.showInitReg
+    edit:state.InitReg.edit
   };
 };
 
-export default connect(mapStateToProps)(InitialRegModal)
+export default connect(mapStateToProps,actions)(InitialRegModal)
