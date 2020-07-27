@@ -11,13 +11,11 @@ class UserIcon extends Component{
 		imgsrc = this.props.gender==="Male"?male_avatar:female_avatar;*/
 	let size = this.props.size?this.props.size+"px":"50px"	
 		return(
-			<div style = {{display: "inline",
-						   width:size,
-						   marginLeft: "8px"}}>	
+			
 		    	<img style={{width:size,
 							height:size,
-							borderRadius:"50%"}} src = {imgsrc}/>
-		   	</div>
+							borderRadius:"50%"}} alt="User Icon" src = {imgsrc}/>
+		   	
 			)
 	}
 }		

@@ -2,25 +2,28 @@ import React, {Component} from "react"
 import Header from "./Header"
 import InitialRegModal from "./InitialRegModal"
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Redirect 
 } from "react-router-dom";
 import TextChat from './TextChat';
 import VoiceChat from './VoiceChat';
-import update from 'immutability-helper';
+// import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
+import {isMobile} from "react-device-detect";
 import './main.css';
 
 import socket from "../services/socket.js"
 
 
-
 class Main extends Component{
 	constructor(props){
 		super(props)
+		window.addEventListener('resize', () => { 
+		  document.querySelector(':root').style
+		    .setProperty('--vh', window.innerHeight/100 + 'px');
+		})
 
 		let user = localStorage.getItem("user")
 		user = JSON.parse(user)
@@ -39,7 +42,7 @@ class Main extends Component{
 			this.props.addUser(user)
 		});
 		socket.on('deleteUser', (user)=>{
-			if(this.props.partner && user.socketid == this.props.partner.socketid){
+			if(this.props.partner && user.socketid === this.props.partner.socketid){
 				this.props.newPartner();
 			}
 			this.props.deleteUser(user)
@@ -47,7 +50,22 @@ class Main extends Component{
 
 		socket.on("left_chat", (partner)=>{
 			this.props.leftChat(partner.socketid)
+			this.props.toggleUsersWindow(true)
 		})
+
+		socket.on("startTyping",(partner)=>{
+			console.log("startTyping")
+			// console.log(partner)
+			this.props.startTyping(partner.socketid)
+
+		})
+
+		socket.on("endTyping",(partner)=>{
+			console.log("endTyping")
+			this.props.endTyping(partner.socketid)
+			// console.log(partner)
+		})
+
 
 	}
 
@@ -77,13 +95,14 @@ class Main extends Component{
 
 	render(){
 		let handleModalConfirmation = this.props.InitReg.edit?this.handleEditConfirmation:this.handleRegisterConfirmation
-		// console.log(this.props)
 		return (
 			<React.Fragment>
 			  <div className="container-fluid TextChat">
 				  <div className="row no-gutter">
 				    <div className="col-sm-2">
-				      <Header user={this.props.user}/>
+				    	{(!isMobile || (isMobile && this.props.Header.show)) &&
+				      	<Header user={this.props.user}/>
+				    	}
 				    </div>
 				    <div className="col-sm-10">
 					    <Switch>
@@ -112,8 +131,10 @@ class Main extends Component{
 } 
 
 const mapStateToProps = (state) => {
+	let WindowToggle = state.WindowToggle
 	state = state.main_reducer
   return {
+  	Header:WindowToggle.Header,
     InitReg:state.InitReg,
     user:state.user,
     // partner:state.partner,

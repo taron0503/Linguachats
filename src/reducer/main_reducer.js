@@ -4,7 +4,6 @@ let initialstate = {users:users,
 					//partner:null,
 					user:user,
 					InitReg:{show:false,edit:false},
-          UsersWindow:{show:true}
           }
 
 
@@ -19,7 +18,7 @@ const main_reducer = (state = initialstate, action) => {
       user.partnerId = partnerId
       let users = [...state.users]
       users.forEach((user)=>{
-        if(user=>user.socketid == partnerId){
+        if(user=>user.socketid === partnerId){
           user.messages.forEach(message=>message.unread=false)
           // user.partner = true
         }
@@ -50,7 +49,48 @@ const main_reducer = (state = initialstate, action) => {
     case "deleteUser":{
       let user2 = action.user
       let users = state.users
-      users=users.filter(user=>user.socketid!=user2.socketid)
+      users=users.filter(user=>user.socketid!==user2.socketid)
+      return {...state,users:users}
+    }
+    case "startTyping":{
+      let users = [...state.users]
+      users=users.map(user=>{
+        if(user.socketid === action.partnerId){
+          user={...user}
+          user.typing=true
+        }
+        return user
+      })
+      return {...state,users:users}
+    }
+    case "endTyping":{
+      let users = [...state.users]
+      users=users.map(user=>{
+        if(user.socketid === action.partnerId){
+          user={...user}
+          user.typing=false
+        }
+        return user
+      })
+      return {...state,users:users}
+    }
+    case "sortUsers":{
+      let field = action.field
+      let reverse = action.reverse
+      let users = [...state.users]
+      users=users.sort((user1,user2)=>{
+        user1 = user1[field]
+        user2 = user2[field]
+        if(field === "time" || field === "age"){
+          user1 = parseInt(user1)
+          user2 = parseInt(user2)
+        }
+        if(user1<user2)
+          return reverse?1:-1
+        if(user1>user2)
+          return reverse?-1:1
+        return 0
+      })
       return {...state,users:users}
     }
   	case "toggleInitReg":{
@@ -65,29 +105,25 @@ const main_reducer = (state = initialstate, action) => {
       InitReg.edit = edit
       return {...state,InitReg:InitReg};
     }
-    case "toggleUsersWindow":{
-      let show = action.show
-      return {...state,UsersWindow:{show:show}}
-    }
     case "addMessage":{
       let msg = action.msg
       let message = {text:{__html:msg.text},time:msg.time,unread:true}
-      let partner = state.users.find(user=>user.socketid==state.user.partnerId)
-      if(msg.sender == state.user.socketid || partner && partner.socketid == msg.sender){
+      let partner = state.users.find(user=>user.socketid===state.user.partnerId)
+      if(msg.sender === state.user.socketid || (partner && partner.socketid === msg.sender)){
         message.unread = false
       }
       // let users = JSON.parse(JSON.stringify(state.users))
       let users = [...state.users]
       users = users.map(user=>{
-        if(user.socketid != state.user.socketid){
+        if(user.socketid !== state.user.socketid){
           let user_perm = {...user}
-          if(user.socketid == msg.sender){
+          if(user.socketid === msg.sender){
             message.from = "partner"
             user_perm.messages.unshift(message)
             user_perm.chat=true
             return user_perm
           }
-          if(user.socketid == msg.recipient){
+          if(user.socketid === msg.recipient){
             message.from = "user"
             user_perm.messages.unshift(message)
             user_perm.chat=true
@@ -100,21 +136,22 @@ const main_reducer = (state = initialstate, action) => {
     }
     case "leftChat":{
       let users = [...state.users]
-      let user = {...state.user}
-      user.partnerId = null
+      let mainuser = {...state.user}
+      if(mainuser.partnerId === action.socketid)
+            mainuser.partnerId = null
       users = users.map(user=>{
-        if(user.partnerId == action.partnerId){
+        if(user.socketid === action.socketid){
           user.chat = false
           user.messages = []
         }
         return user
       })
-      return {...state,user:user,users:users}
+      return {...state,user:mainuser,users:users}
     }
     case "EXAMPLE":{
-      console.log(1)
-      let currentPost = state.posts.filter(post => post.id == 1 );
-      console.log(currentPost[0]==state.posts[0])
+      //console.log(1)
+      let currentPost = state.posts.filter(post => post.id === 1 );
+      //console.log(currentPost[0]===state.posts[0])
       currentPost[0].likes++;
        let a = {...state, posts: [ ...state.posts,currentPost[0],state.posts[1] ]} 
        debugger

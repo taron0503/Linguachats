@@ -82,7 +82,7 @@ class InitialRegModal extends Component{
 				      onSubmit={(values, actions) => {
 				        // console.log(JSON.stringify(values, null, 2));
 				        values.fullname=values.name+" "+values.surname
-				        values.img = values.gender=="Male"?"avatarM.jpg":"avatarF.png"
+				        values.img = values.gender==="Male"?"avatarM.png":"avatarF.png"
 				        this.props.handleModalConfirmation(values)
 				        actions.resetForm({});
 				      }}
@@ -141,7 +141,7 @@ class InitialRegModal extends Component{
 						    				name="age"
 						    				onChange={option=>setFieldValue("age",option.value)}
 					      				onBlur={handleBlur}
-					      				defaultValue = {ages.find(age=>age.value==values.age)}
+					      				defaultValue = {ages.find(age=>age.value===values.age)}
 					      				/>
 					     {errors.age && touched.age && <p className="error">{errors.age}</p>}
 
@@ -153,7 +153,7 @@ class InitialRegModal extends Component{
 						    				name="gender"
 						    				onChange={option=>setFieldValue("gender",option.label)}
 					      				onBlur={handleBlur}
-					   						defaultValue = {this.gender_options.find(gender=>gender.label==values.gender)}/>	   
+					   						defaultValue = {this.gender_options.find(gender=>gender.label===values.gender)}/>	   
 				  	</InputGroup>
 				  	</FormGroup>
 				  	
@@ -167,7 +167,7 @@ class InitialRegModal extends Component{
 								    	name="country"
 								      onChange={option=>setFieldValue("country",option.label)}
 								      onBlur={handleBlur}
-								      defaultValue = {countries.find(country=>country.label==values.country)}
+								      defaultValue = {countries.find(country=>country.label===values.country)}
 					    />
 				  	</InputGroup>
 				  	</FormGroup>

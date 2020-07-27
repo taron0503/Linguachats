@@ -20,7 +20,7 @@ function get_emojies(size=20){
 
 export function get_emoji_byName(name,size=20){
 	let emojies = get_emojies(size);
-	let emoji = emojies.find(emoji=>emoji.name==name)
+	let emoji = emojies.find(emoji=>emoji.name===name)
 	if(emoji)
 		return emoji;
 }

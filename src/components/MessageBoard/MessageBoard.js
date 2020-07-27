@@ -25,7 +25,7 @@ class MessageBoard extends Component{
 	}
 
 	componentDidUpdate(prevProps){
-		if(prevProps.partner!=this.props.partner){
+		if(prevProps.partner.socketid!==this.props.partner.socketid){
 			this.setState({msg:""})
 		}
 		this.contentEditable.current.focus()
@@ -37,9 +37,21 @@ class MessageBoard extends Component{
 	  if (sel.rangeCount) {
 	      range = sel.getRangeAt(0);
 	  }
-	  // this.props.hide_EmojiPicker()
+	  this.startTyping()
+	  if(evt.target.value.length < 1){
+	  	socket.emit("endTyping",{user:this.props.user,partner:this.props.partner}) 
+	  }
       this.setState({msg: evt.target.value,range:range});
 	};
+
+	startTyping=(msg)=>{
+		// console.log("typing")
+		if(this.tipingTimer)
+			clearTimeout(this.tipingTimer)
+		socket.emit("startTyping",{user:this.props.user,partner:this.props.partner})
+		this.tipingTimer = setTimeout(()=>{
+		socket.emit("endTyping",{user:this.props.user,partner:this.props.partner}) }, 5000);
+	}
 
 	handleClick = evt =>{
 		// if(document.getSelection()){
@@ -51,10 +63,10 @@ class MessageBoard extends Component{
 	    if (sel.rangeCount) {
 	      range = sel.getRangeAt(0);
 	    }
-	    if( evt.key == "Backspace"  ){
-		    var selection = document.getSelection();
+	    if( evt.key === "Backspace"  ){
+		    let selection = document.getSelection();
 		    // if caret is at the begining of the text node (0), remove previous element
-		    if( selection && selection.anchorOffset == 0){
+		    if( selection && selection.anchorOffset === 0){
 		    	// console.log(selection.anchorNode.previousSibling)
 		    	if(selection.anchorNode.previousSibling){
 		          selection.anchorNode.previousSibling.parentNode.removeChild(selection.anchorNode.previousSibling)
@@ -63,9 +75,9 @@ class MessageBoard extends Component{
 		    	}
 		 	}
 	    }
-		if(evt.key == "Delete") {
-	        var selection = document.getSelection();
-	        if(selection && selection.anchorNode.length == selection.anchorOffset){
+		if(evt.key === "Delete") {
+	        let selection = document.getSelection();
+	        if(selection && selection.anchorNode.length === selection.anchorOffset){
 	        	if(selection.anchorNode.nextSibling){
 		          selection.anchorNode.nextSibling.parentNode.removeChild(selection.anchorNode.nextSibling)
 		    	}else if(selection.anchorNode.parentNode.nextSibling){
@@ -74,7 +86,7 @@ class MessageBoard extends Component{
 	        }
 	    }
 		this.setState({range:range,msg:this.contentEditable.current.innerHTML})
-		if(evt.key == "Enter" && !evt.shiftKey) {
+		if(evt.key === "Enter" && !evt.shiftKey) {
 					evt.preventDefault()
 					this.props.hide_EmojiPicker()
 	        this.sendMessage()
@@ -98,12 +110,9 @@ class MessageBoard extends Component{
 		let msg = this.state.msg
 		if(!msg)
 			return
-		let emoji 
-		if(this.getEmojiIfOne(msg)){
-			emoji=this.getEmojiIfOne(msg)
-		}
 		let partner = this.props.partner
 		let socketid=partner.socketid
+		// socket.emit("endTyping",{user:this.props.user,partner:this.props.partner})
 		socket.emit('chat message', {msg:msg,socketid:socketid})
 		this.setState({msg:""})
 	}
@@ -146,6 +155,7 @@ class MessageBoard extends Component{
 	
 
 	render(){
+		console.log(this.props.user)
 		return (
 			<React.Fragment>
 				<div className="type_msg_wrapper">
@@ -176,7 +186,7 @@ class MessageBoard extends Component{
 
 const mapStateToProps = (state) => {
 	let EmojiPicker = state.EmojiPicker
-	let partner = state.main_reducer.users.find(user=>user.socketid==state.main_reducer.user.partnerId)
+	let partner = state.main_reducer.users.find(user=>user.socketid===state.main_reducer.user.partnerId)
   return {
     partner: partner,
     user:state.main_reducer.user,

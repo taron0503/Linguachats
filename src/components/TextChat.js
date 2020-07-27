@@ -13,12 +13,16 @@ class TextChat extends Component{
 		socket.on('send_message', this.handleOnMessage);
 	}
 
+	componentWillUnmount=()=>{
+    socket.off('send_message', this.handleOnMessage);
+   }
+
 	handleOnMessage=(msg)=>{
 		this.props.addMessage(msg)
+		this.props.endTyping(this.props.partner.socketid)
 	}
 
 	render(){
-		console.log(isMobile)
 		let partner = this.props.partner
 		return (
 			<div className="container-fluid TextChat">
@@ -27,8 +31,14 @@ class TextChat extends Component{
 			    {this.props.UsersWindow.show && <UsersWindow/>}
 			    </div>
 			    <div className="col-sm-8">
-			    {partner?
-			      <MessagesWindow partner={partner}/>:<div className="EmptyMessageWindow">Find someone to talk</div>
+			    {(isMobile && this.props.MessagesWindow.show && partner) &&
+			    	<MessagesWindow partner={partner}/>
+			    }
+			    {(!isMobile && partner) &&
+			      <MessagesWindow partner={partner}/>
+			    }
+			    {(!isMobile && !partner) &&
+			      <div className="EmptyMessageWindow">Find someone to talk</div>
 			    }
 			    </div>
 			  </div>
@@ -39,10 +49,12 @@ class TextChat extends Component{
 } 
 
 const mapStateToProps = (state) => {
+	let WindowToggle = state.WindowToggle
 	state = state.main_reducer
-	let partner = state.users.find(user=>user.socketid==state.user.partnerId)
+	let partner = state.users.find(user=>user.socketid===state.user.partnerId)
   return {
-  	UsersWindow:state.UsersWindow,
+  	UsersWindow:WindowToggle.UsersWindow,
+  	MessagesWindow:WindowToggle.MessagesWindow,
     partner:partner,
     users:state.users,
   };

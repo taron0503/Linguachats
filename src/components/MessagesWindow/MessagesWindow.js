@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import {isMobile} from "react-device-detect";
 import ScrollToBottom from '../Helpers/ScrollToBottom';
+import TypingIcon from '../Helpers/TypingIcon';
 import MessageBoard from '../MessageBoard'
 import {get_emoji_byName}  from '../Helpers/EmojiPicker'
 
@@ -15,12 +16,17 @@ class MessagesWindow extends Component{
 
 	closeChat=()=>{
 		socket.emit("left_chat",{user:this.props.user,partner:this.props.partner})
+		this.props.leftChat(this.props.user.partnerId)
+		this.props.toggleMessagesWindow(false)
 		this.props.toggleUsersWindow(true)
+		this.props.toggleHeader(true)
 		// this.props.newPartner();
 	}
 
 	collapseChat=()=>{
-		this.props.toggleUsersWindow(true)
+		this.props.toggleMessagesWindow(false)
+		this.props.toggleUsersWindow(true)	
+		this.props.toggleHeader(true)
 	}
 
 	getEmojiIfOne(msg){
@@ -45,28 +51,38 @@ class MessagesWindow extends Component{
   }
 
 	render(){
-		// console.log(this.props.partner)
 		let partner = this.props.partner
 		let user = this.props.user
+		let MWbodyHeight = "calc(100 * var(--vh,1vh) - 37px - 44px)"//isMobile?"calc(100% - 37px - 44px)":"calc(100% - 37px - 44px)"
 		return (
 			<div className="MessagesWindow">
 				<div className="MWheader">
+					{isMobile &&
+					<button type="button" className="backButton" onClick={this.collapseChat}>
+						<svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+					    <path fillRule="evenodd" d="M5.854 4.646a.5.5 0 0 1 0 .708L3.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"/>
+					    <path fillRule="evenodd" d="M2.5 8a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+					  </svg>  
+					</button>
+					}
 					{partner.name}
 					<button type="button" className="close" aria-label="Close" onClick={this.closeChat}>
 					  <span aria-hidden="true">&times;</span>
 					</button>
-					{isMobile &&
-					<button type="button" className="collapseButton" onClick={this.collapseChat}>
-					  &minus;
-					</button>
-					}
 				</div>
-				<ScrollToBottom className="MWbody Cscroll">
-				{/*<br/>*/}
+				<ScrollToBottom style = {{height:MWbodyHeight}} className="MWbody Cscroll">
+				{partner.typing &&
+					<div className = "chatMessageL">
+							<div className="message_sender_name">
+							  {partner.name}
+							</div>
+							<TypingIcon size={6}/>
+					</div>
+			  }
 				{partner.messages.map((message,index)=>{
-					return <div key={index} className = {message.from=="partner"?"chatMessageL":"chatMessageR"}>
+					return <div key={index} className = {message.from==="partner"?"chatMessageL":"chatMessageR"}>
 						<div className="message_sender_name">
-						  {message.from=="partner"?partner.name:user.name}
+						  {message.from==="partner"?partner.name:user.name}
 						</div>
 						{this.getEmojiIfOne(message.text)?<div className="chatMessageText" style={{"background":"white"}} dangerouslySetInnerHTML={this.getEmojiIfOne(message.text)}></div>:
 						<div className="chatMessageText" dangerouslySetInnerHTML={message.text}></div>}
@@ -85,8 +101,7 @@ class MessagesWindow extends Component{
 
 const mapStateToProps = (state) => {
 	state = state.main_reducer
-	let partner = state.users.find(user=>user.socketid==state.user.partnerId)
-	// console.log(partner)
+	let partner = state.users.find(user=>user.socketid===state.user.partnerId)
   return {
     partner: partner,
     user:state.user,

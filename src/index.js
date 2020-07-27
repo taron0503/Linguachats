@@ -9,7 +9,6 @@ import { Provider } from 'react-redux';
 import reducer from './reducer/index';
 
 const store = createStore(reducer);
-console.log(store.getState())
 
 ReactDOM.render(
   <Provider store={store}>

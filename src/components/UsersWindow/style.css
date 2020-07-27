@@ -1,13 +1,14 @@
 .TextChatWindow{
 	/*margin-right: -15px;*/
-	font-size: 15px;
+	height:100vh;
+	font-size: 13px;
 }
 
 .TextChatUsers{
 	border-right: 1px solid rgb(229,229,229); 
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 95vh;
+	/*height: calc(100% - 36.375px - 56px);*/
 }
 
 .chatWindow_header{
@@ -15,12 +16,29 @@
 	z-index: 600!important;
 }
 
+.cwhWrapper{
+	padding:2px;
+	background: rgb(226,230,233);
+}
+
 .chatWindow_header_item{
 	text-align:center;
-	padding:2%;
+	padding:2% 0!important;
 	cursor: pointer;
 	background: rgb(226,230,233);
 	color:black;
+}
+
+.chatWindow_header_item:nth-child(1){
+	border-radius: 8px 0 0 8px;
+    border: 2px solid white;
+    border-right: 0;
+}
+
+.chatWindow_header_item:nth-child(2){
+	border-radius: 0 8px 8px 0;
+    border: 2px solid white;
+    border-left: 0;
 }
 
 .selected{
@@ -31,5 +49,13 @@
 .usersTable_header div{
   background: rgb(236,239,253); 
   color:rgb(170,174,175);
+}
+
+.UsDropdownContainer{
+	padding:2px 4px!important; 
+	border-radius: 8px;
+    border: 2px solid white;
+    border-right: 0;
+    background: rgb(226,230,230);
 }
 

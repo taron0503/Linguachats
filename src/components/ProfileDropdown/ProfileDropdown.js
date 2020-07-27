@@ -9,7 +9,7 @@ import styles from "./style.module.css"
 
 class ProfileDropdown extends Component{
 
- CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+ /*CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
 	  <div className="user_profile_name"
 	    ref={ref}
 	    onClick={(e) => {
@@ -18,7 +18,7 @@ class ProfileDropdown extends Component{
 	  >
 	    {children}
 	  </div>
-	));
+	));*/
 
  	handleEdit=()=>{
  		this.props.toggleInitReg(true)

@@ -14,7 +14,7 @@ export default class ScrollToBottom extends Component{
 	  this.scrollToBottom();
 	}
 	render(){
-		return (<div className={this.props.className} style={{ position:"relative" }}>
+		return (<div className={this.props.className} style={{...this.props.style,position:"relative"}}>
 		{this.props.children}
 		<div style={{ position:"absolute", bottom: "0" }}
              ref={(el) => { this.messagesEnd = el; }}>
