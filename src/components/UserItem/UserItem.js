@@ -1,29 +1,25 @@
 import React, {Component} from "react"
 import UserIcon from "../UserIcon"
-import { connect } from 'react-redux';
-import * as actions from '../../actions';
 import TypingIcon from '../Helpers/TypingIcon';
 
-import {isMobile} from "react-device-detect";
 import "./style.css"
 
-class UsersItem extends Component{
-	handleUserItemClick = ()=>{
-		let newPartner = this.props.newPartner
-		newPartner(this.props.user.socketid)
-		if(isMobile){
-			this.props.toggleMessagesWindow(true)
-			this.props.toggleUsersWindow(false)
-			this.props.toggleHeader(false)
-		}
-	}
+export default class UsersItem extends Component{
 	render(){
 		let user = this.props.user
 		let unread_messages = user.messages.reduce((count,message)=>{
 			return message.unread?count+1:count
 		},0)
+		let handleClick = ()=>{}
+		let style = {}
+		if(this.props.main_user.partnerId===user.socketid){
+			style={background:"lavender"}
+		}
+		if(this.props.main_user.socketid!==user.socketid){
+			handleClick = ()=>{this.props.handleUserItemClick(user)}
+		}
 		return (
-	    		<div className="row no-gutter user_row" onClick={this.props.main_user.socketid!==user.socketid?this.handleUserItemClick:()=>{}} style={this.props.styles}>
+	    		<div className="row no-gutter user_row" onClick={handleClick} style={style}>
 	    		    <div className="col-sm-2 col-2 ">
 		    		  <UserIcon size="50" img={user.img}/>
 	    			</div>
@@ -62,13 +58,3 @@ class UsersItem extends Component{
 				)
 	}
 } 
-
-const mapStateToProps = (state) => {
-  state = state.main_reducer
-  return {
-  	main_user:state.user,
-    users: state.users,
-  };
-};
-
-export default connect(mapStateToProps,actions)(UsersItem)

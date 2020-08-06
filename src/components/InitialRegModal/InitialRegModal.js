@@ -83,6 +83,8 @@ class InitialRegModal extends Component{
 				        // console.log(JSON.stringify(values, null, 2));
 				        values.fullname=values.name+" "+values.surname
 				        values.img = values.gender==="Male"?"avatarM.png":"avatarF.png"
+				        values.rooms = ["textChat"]
+				        values.status="free"
 				        this.props.handleModalConfirmation(values)
 				        actions.resetForm({});
 				      }}

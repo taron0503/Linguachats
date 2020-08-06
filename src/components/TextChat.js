@@ -15,11 +15,22 @@ class TextChat extends Component{
 
 	componentWillUnmount=()=>{
     socket.off('send_message', this.handleOnMessage);
+    this.props.meLeftChat(this.props.user.partnerId);
    }
 
 	handleOnMessage=(msg)=>{
 		this.props.addMessage(msg)
-		this.props.endTyping(this.props.partner.socketid)
+		this.props.endTyping(msg.sender)
+	}
+
+	handleUserItemClick = (user)=>{
+		let newPartner = this.props.newPartner
+		newPartner(user.socketid)
+		if(isMobile){
+			this.props.toggleMessagesWindow(true)
+			this.props.toggleUsersWindow(false)
+			this.props.toggleHeader(false)
+		}
 	}
 
 	render(){
@@ -28,7 +39,10 @@ class TextChat extends Component{
 			<div className="container-fluid TextChat">
 			  <div className="row no-gutter">
 			    <div className="col-sm-4">
-			    {this.props.UsersWindow.show && <UsersWindow/>}
+			    {this.props.UsersWindow.show && 
+			    	<UsersWindow users={this.props.users} 
+			    							 main_user={this.props.user}
+			    							 handleUserItemClick={this.handleUserItemClick}/>}
 			    </div>
 			    <div className="col-sm-8">
 			    {(isMobile && this.props.MessagesWindow.show && partner) &&
@@ -57,6 +71,7 @@ const mapStateToProps = (state) => {
   	MessagesWindow:WindowToggle.MessagesWindow,
     partner:partner,
     users:state.users,
+    user:state.user
   };
 };
 

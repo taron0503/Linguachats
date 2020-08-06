@@ -16,7 +16,8 @@ class MessagesWindow extends Component{
 
 	closeChat=()=>{
 		socket.emit("left_chat",{user:this.props.user,partner:this.props.partner})
-		this.props.leftChat(this.props.user.partnerId)
+		this.props.meLeftChat()
+		// this.props.changeStatus(this.props.user.socketid,"free")
 		this.props.toggleMessagesWindow(false)
 		this.props.toggleUsersWindow(true)
 		this.props.toggleHeader(true)
@@ -70,6 +71,7 @@ class MessagesWindow extends Component{
 					  <span aria-hidden="true">&times;</span>
 					</button>
 				</div>
+				{this.props.children}
 				<ScrollToBottom style = {{height:MWbodyHeight}} className="MWbody Cscroll">
 				{partner.typing &&
 					<div className = "chatMessageL">

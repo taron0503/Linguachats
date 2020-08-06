@@ -28,7 +28,7 @@ class Main extends Component{
 		let user = localStorage.getItem("user")
 		user = JSON.parse(user)
 	    if(user){
-	    	this.addUserToChat(user)
+	     this.addUserToChat(user)
 	    }else{
 	    	this.props.toggleInitReg(true)
 	    }
@@ -49,19 +49,24 @@ class Main extends Component{
 		});
 
 		socket.on("left_chat", (partner)=>{
-			this.props.leftChat(partner.socketid)
+			this.props.userLeftChat(partner.socketid)
 			this.props.toggleUsersWindow(true)
 		})
 
-		socket.on("startTyping",(partner)=>{
-			console.log("startTyping")
-			// console.log(partner)
-			this.props.startTyping(partner.socketid)
+		socket.on("addUserToVoiceChat",(socketid)=>{
+			this.props.addUserToVoiceChat(socketid)
+		})
 
+		socket.on("deleteUserFromVoiceChat",socketid=>{
+			this.props.deleteUserFromVoiceChat(socketid)
+		})
+
+		socket.on("startTyping",(partner)=>{
+			this.props.startTyping(partner.socketid)
 		})
 
 		socket.on("endTyping",(partner)=>{
-			console.log("endTyping")
+			// console.log("endTyping")
 			this.props.endTyping(partner.socketid)
 			// console.log(partner)
 		})
@@ -84,13 +89,14 @@ class Main extends Component{
 	}
 
 	addUserToChat=(user)=>{
-		socket.emit("get_socketid")
-      	socket.off("send_socketid")
-      	socket.on("send_socketid",(socketid)=>{
-          user.socketid = socketid
-          socket.emit("user_data",user)
-      })
-      	this.props.setUser(user)
+			let that = this
+			socket.emit("get_socketid")
+			socket.off("send_socketid")
+			socket.on("send_socketid",(socketid)=>{
+	      user.socketid = socketid
+	      socket.emit("user_data",user)
+		  })
+		  this.props.setUser(user) 	
 	}
 
 	render(){

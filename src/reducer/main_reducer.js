@@ -2,6 +2,7 @@ let users = []
 let user = {name:"",surname:"",age:"",gender:"Male",country:"United Kingdom",speaks:["English"],learns:["Spanish"]}
 let initialstate = {users:users,
 					//partner:null,
+          UserIsOnline:false,
 					user:user,
 					InitReg:{show:false,edit:false},
           }
@@ -46,6 +47,46 @@ const main_reducer = (state = initialstate, action) => {
       users.unshift(user)
   		return {...state,users:users}
   	}
+    case "changeStatus":{
+      let users = [...state.users]
+      let socketid = action.socketid
+      let status = action.status
+      let main_user={...state.user}
+      if(socketid===main_user.socketid){
+        main_user.status=status
+      }
+      users = users.map(user=>{
+        if(user.socketid===socketid)
+          user={...user,status:status}
+        return user
+      })
+      return {...state,user:main_user,users:users}
+    }
+    case "addUserToVoiceChat":{
+      let users=[...state.users]
+      users = users.map(user=>{
+        if(user.socketid && user.socketid === action.socketid){
+          if(!user.rooms.includes("voiceChat")){
+            user.rooms.push("voiceChat")
+          }
+        }
+        return user
+      })
+      return {...state,users:users}
+    }
+    case "deleteUserFromVoiceChat":{
+      let users=[...state.users]
+      users = users.map(user=>{
+        if(user.socketid === action.socketid){
+          const index = user.rooms.indexOf("voiceChat");
+          if (index > -1) {
+            user.rooms.splice(index, 1);
+          }
+        }
+        return user
+      })
+      return {...state,users:users}
+    }
     case "deleteUser":{
       let user2 = action.user
       let users = state.users
@@ -134,7 +175,20 @@ const main_reducer = (state = initialstate, action) => {
       })
       return {...state,users:users}
     }
-    case "leftChat":{
+    case "meLeftChat":{
+      let users = [...state.users]
+      let main_user = {...state.user}
+      users = users.map(user=>{
+        if(user.socketid === main_user.partnerId){
+          user.chat = false
+          user.messages = []
+        }
+        return user
+      })
+      main_user.partnerId=undefined
+      return {...state,user:main_user,users:users}
+    }
+    case "userLeftChat":{
       let users = [...state.users]
       let mainuser = {...state.user}
       if(mainuser.partnerId === action.socketid)

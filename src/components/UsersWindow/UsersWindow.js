@@ -6,14 +6,10 @@ import * as actions from '../../actions';
 import {isMobile} from "react-device-detect";
 import "./style.css"
 
-class UsersWindow extends Component{
+export default class UsersWindow extends Component{
 	constructor(props){
 		super(props)
 		this.state = {All_Users:true,Chats:false}
-	}
-
-	sortUsers=(field)=>{
-		
 	}
 
 	handleClick=(value)=>{
@@ -49,18 +45,11 @@ class UsersWindow extends Component{
 				<div className="container-fluid TextChatUsers Cscroll" style = {{height:TextChatUsersHeight}}>
 
 				  {users.map((user,index)=>{
-				  	if(this.props.user.partnerId===user.socketid){
-				  		return <UserItem user={user} key={index} newPartner={()=>{}} partner={true} styles={{"backgroundColor":"lightblue"}}/>
-				  	}
 				  	if(this.state.Chats){
 				  		if(user.chat)
-				  			return <UserItem user={user} key={index} newPartner={this.props.newPartner}/>
+				  			return <UserItem user={user} main_user={this.props.main_user} key={index}  handleUserItemClick={this.props.handleUserItemClick}/>
 				  	}else{
-				  		if(user.socketid === this.props.user.socketid){
-				  			return <UserItem user={user} key={index} newPartner={()=>{}}/>
-				  		}else{
-				  			return <UserItem user={user} key={index} newPartner={this.props.newPartner}/>
-				  		}
+				  			return <UserItem user={user} main_user={this.props.main_user} key={index}  handleUserItemClick={this.props.handleUserItemClick}/>
 				  	}
 				  	return ""
 				  })}
@@ -72,12 +61,3 @@ class UsersWindow extends Component{
 	}
 } 
 
-const mapStateToProps = (state) => {
-  state = state.main_reducer
-  return {
-    users: state.users,
-    user:state.user,
-  };
-};
-
-export default connect(mapStateToProps,actions)(UsersWindow)

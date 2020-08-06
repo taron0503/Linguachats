@@ -2,7 +2,7 @@ import React, {Component} from "react"
 import {emojies, get_emoji_byName} from "./Emojies.js"
 import "./style.css"
 
-export default class InitialRegModal extends Component{
+export default class EmojiPicker extends Component{
 
 	setModalRef = element => {
       this.ModalRef = element;

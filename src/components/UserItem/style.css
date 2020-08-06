@@ -9,11 +9,12 @@
   cursor:pointer;
   padding-left: 10px;
   padding-right: 0px;
+  border-radius: 15px;
 }
 
-.user_row:nth-child(odd){
+/*.user_row:nth-child(odd){
   background:rgb(239,239,239) 
-}
+}*/
 
 .user_row:hover{
   background-color: rgb(219,240,255)
@@ -29,7 +30,7 @@
 
 .chaticon{
 	float:right;
-	margin: 0 9px 2px;
+	margin: 0 4px 2px;
 	position: absolute;
 	right:0px;
 	bottom: 0px;

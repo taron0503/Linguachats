@@ -35,7 +35,7 @@
 }
 
 .MWbody{
-	padding:15px; 	
+	/*padding:15px; 	*/
 	overflow: auto;
 	font-size: 15px;
 	display: flex;
