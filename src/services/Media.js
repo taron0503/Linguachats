@@ -7,9 +7,28 @@ let Media={
 			  });
 			},
     videoOff:async function(){
-		let tracks = this.stream.getTracks()
-		console.log(tracks)
-		tracks.find(track=>track.kind==="video").stop()
+		const videoTracks = this.stream.getVideoTracks();
+		videoTracks[0].stop()
+		this.stream.removeTrack(videoTracks[0])
+
+	},
+	videoOn:async function(){
+		let videostream = await navigator.mediaDevices.getUserMedia( { video: true})
+		const videoTracks = videostream.getVideoTracks();
+		this.stream.addTrack(videoTracks[0]);
+	},
+
+	audioOff:async function(){
+		const audioTracks = this.stream.getAudioTracks();
+		console.log(audioTracks)
+		audioTracks[0].stop()
+		this.stream.removeTrack(audioTracks[0])
+	},
+
+	audioOn:async function(){
+		let audiostream = await navigator.mediaDevices.getUserMedia( { audio: true})
+		const audioTracks = audiostream.getAudioTracks();
+		this.stream.addTrack(audioTracks[0]);
 	}
 
 }

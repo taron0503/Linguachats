@@ -12,28 +12,51 @@ export default class RemoteVideo extends Component{
 	}
 
 	render(){
-		console.log(this.props.status)
+		console.log("RemoteVideo")
+		console.log(this.props)
 		let partner = this.props.partner
 		let status = this.props.status
-		let denied = this.props.denied
+		let answer = this.props.answer
+
+		let remoteVideoOffOn = this.props.remoteVideoOffOn
 		return(
 				<div className="remoteVideoWrapper">
-				{status==="talking"? 
+
+				{status==="talking" &&
+					<>
 					<video autoPlay 
 				         ref={this.props.remoteVideo} 
 				         id="remote-video"
-				         className="remoteVideo"></video>:
+				         className="remoteVideo"
+				         style={{display:remoteVideoOffOn==="Off"?"none":"block"}}></video>
+
+						 <div className="buttonContainer" style={{display:remoteVideoOffOn==="Off"?"flex":"none"}}>
+						  <UserIcon size="80" img={partner.img}/>
+						  <div className = "partnerName">{partner.fullname}</div>
+						</div></>
+
+			  }
+
+
+				{status!=="talking" &&
 				  <div className="buttonContainer">
 						<UserIcon size="80" img={partner.img}/>
 						<div className = "partnerName">{partner.fullname}</div>
-						{status==="calling" && <span className="callingStatus">...calling</span>}
-						{denied.status && <span>denied</span>}
+						
+						{status==="calling" && 
+						  <span className="callingStatus">...calling</span>}
+						{answer==="denied" && 
+							<span className="call_answer">Denied</span>}
+						{answer==="no_answer" && 
+							<span className="call_answer">No answer</span>}
 				    {status==="free" && 
-				  	<div className="videoCall_Icon"><img src={videoCall_Icon}  onClick ={this.props.call}/></div>}
+				  	  <div className="videoCall_Icon"><img src={videoCall_Icon}  onClick ={this.props.call}/></div>}
 					  {status!=="free" && 
-					  <div className="hangUp_Icon"><img src={hangUp_Icon}  onClick ={()=>{this.props.endCall(false)}}/></div>}
-			    </div>
-				}
+					    <div className="hangUp_Icon"><img src={hangUp_Icon}  onClick ={()=>{this.props.endCall(false)}}/></div>}
+						 
+			    </div>}
+				
+
 				</div>
 			)
 	}

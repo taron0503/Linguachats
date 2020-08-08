@@ -1,11 +1,13 @@
 .VideoChatModal{
 	/*border:1px solid black;*/
-	/*height:50%;*/
+	height:75%;
+	max-height: 280px;
 	width:100%;
 	padding: 0 8px 0 0;
 	position:absolute;
 	z-index: 10;
 	top:37px;
+	border-bottom:1px solid rgb(209,209,209);
 }
 
 .videoContainer{
@@ -17,8 +19,10 @@ video{
 	display:block;
 	height: auto;
     max-height: 100%;
+    min-height: 100%;
     max-width: 100%;
-	background: black;
+    width:100%;
+	background: ghostWhite;
 }
 
 .remoteVideoWrapper, .localVideoWrapper{
@@ -61,7 +65,7 @@ video{
 	text-align: center;
 }
 
-.videoCall_Icon, .videoOff_Icon, .hangUp_Icon{
+.videoCall_Icon, .LV_Icon, .hangUp_Icon{
 	cursor: pointer;
 }
 
@@ -70,16 +74,16 @@ video{
 	height: 40px;
 }
 
-.videoOff_Icon img{
+.LV_Icon img{
 	width: 35px;
 	height: 35px;
 	padding: 5px;
 }
 
-.videoOff_Icon{
+.LV_Icon{
 	border-radius: 20px;
 	background: white;
-	margin-left: 10px;
+	margin:0 10px;
 }
 
 .hangUp_Icon img{
@@ -90,4 +94,9 @@ video{
 .callingStatus{
 	color: rgba(153, 153, 153, 1);
 	font-size: 14px;
+}
+
+.call_answer{
+	color:red;
+	font-size: 13px;
 }

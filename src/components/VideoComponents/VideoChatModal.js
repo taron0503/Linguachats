@@ -19,12 +19,35 @@ export default class VideoChatModal extends Component{
     let call=this.props.call 
     let endCall=this.props.endCall 
     let videoOff=this.props.videoOff
-    let denied=this.props.denied		
+    let videoOn=this.props.videoOn
+    let videoOffOn=this.props.videoOffOn
+    let audioOff=this.props.audioOff
+    let audioOn=this.props.audioOn
+    let audioOffOn=this.props.audioOffOn
+    let remoteVideoOffOn=this.props.remoteVideoOffOn
+    let answer=this.props.answer		
 		return(
 			<div className = "VideoChatModal">
 				<div className = "videoContainer">
-					<RemoteVideo partner={partner} status={status} remoteVideo={remoteVideo} call={call} endCall={endCall} denied={denied}/>
-					<LocalVideo partner={partner} status={status} localVideo={localVideo} endCall={endCall} videoOff={videoOff}/>
+					<RemoteVideo 
+					   partner={partner} 
+					   status={status} 
+					   remoteVideo={remoteVideo} 
+					   call={call} 
+					   endCall={endCall} 
+					   answer={answer} 
+					   remoteVideoOffOn={remoteVideoOffOn}/>
+					<LocalVideo 
+					   partner={partner} 
+					   status={status} 
+					   localVideo={localVideo} 
+					   endCall={endCall} 
+					   videoOff={videoOff} 
+					   videoOn={videoOn} 
+					   videoOffOn={videoOffOn}
+					   audioOn={audioOn}
+					   audioOff={audioOff}
+					   audioOffOn={audioOffOn}/>
 				</div>
 					
 			</div>

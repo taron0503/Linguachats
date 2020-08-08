@@ -25,6 +25,7 @@ class TextChat extends Component{
 
 	handleUserItemClick = (user)=>{
 		let newPartner = this.props.newPartner
+		newPartner()
 		newPartner(user.socketid)
 		if(isMobile){
 			this.props.toggleMessagesWindow(true)

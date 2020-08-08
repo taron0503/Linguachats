@@ -21,10 +21,10 @@ class VoiceChat extends Component{
 		this.remoteVideo = React.createRef();
 		this.icecandidates=[]
 		this.state = {caller:"",
-									denied:{
-										status:false,
-										time:"",
-									}}
+		              videoOffOn:"On",
+		              remoteVideoOffOn:"On",
+		              audioOffOn:"On",
+									answer:""}
 	}
 
 	componentDidMount=async()=>{
@@ -63,7 +63,7 @@ class VoiceChat extends Component{
 			console.log("answer-made")
 			if(data.status==="reject"){
 				this.props.changeStatus(this.props.user.socketid,"free")
-				this.setState({denied:{...this.state.denied,status:true}})
+				this.setState({answer:"denied"})
     		console.log("rejected")
 			}else{
 			 this.props.changeStatus(this.props.user.socketid,"talking")
@@ -79,10 +79,20 @@ class VoiceChat extends Component{
 				// this.props.toggleCallingModal(false)
 				this.offer_data=""
 			}
-			if(this.state.status==="talking"){
-				this.closeChat()
+			if(this.props.user.status==="talking"){
+				this.closeChat(false)
 			}
 		})
+
+		socket.on("videoOffOn",(video)=>{
+			this.setState({"remoteVideoOffOn":video})
+		})
+
+		socket.on("no_answer",()=>{
+			this.setState({answer:"no_answer"})
+			this.props.changeStatus(this.props.user.socketid,"free")
+		})
+
 		
 	}
 
@@ -96,9 +106,12 @@ class VoiceChat extends Component{
     socket.off("call-made")
     socket.off("answer-made")
     socket.off("endCall")
+    socket.off("videoOffOn")
+    socket.off("no_answer")
 	}
 
 	handleUserItemClick=async (user)=>{
+		this.endCall(false);
 		let newPartner = this.props.newPartner
 		newPartner(user.socketid)
 		if(isMobile){
@@ -112,6 +125,7 @@ class VoiceChat extends Component{
 	createPeerConnection=()=>{
 		this.peerConnection = new RTCPeerConnection()
 		this.peerConnection.ontrack = ({ streams: [stream] })=> {
+			console.log('got track', stream);
 	  const remoteVideo = this.remoteVideo.current;
 		 if (remoteVideo) {
 		   remoteVideo.srcObject = stream;
@@ -131,7 +145,7 @@ class VoiceChat extends Component{
 	sendAnswer=async()=>{
 		this.createPeerConnection();
 		await this.showMe()
-		this.stream.getTracks().forEach(track => this.peerConnection.addTrack(track, this.stream));
+		Media.stream.getTracks().forEach(track => this.peerConnection.addTrack(track, Media.stream));
 		let data = this.offer_data  	
 	  await this.peerConnection.setRemoteDescription(
 	   new RTCSessionDescription(data.offer)
@@ -149,13 +163,6 @@ class VoiceChat extends Component{
 	}
 
 	showMe=async()=>{
-			// const stream = await this.startMedia()
-			// this.stream = stream
-			// const localVideo = this.localVideo.current;
-			// 		   if (localVideo) {
-			// 		   	 localVideo.muted=true;
-			// 		     localVideo.srcObject = stream;
-			// 		   }
 			await Media.start()
 			const localVideo = this.localVideo.current;
 					   if (localVideo) {
@@ -165,7 +172,6 @@ class VoiceChat extends Component{
 	}
 
 	callUser=async()=>{
-		console.log("call_user")
 		this.createPeerConnection();
 		Media.stream.getTracks().forEach(track => this.peerConnection.addTrack(track, Media.stream));
 	  const offer = await this.peerConnection.createOffer();
@@ -174,37 +180,72 @@ class VoiceChat extends Component{
 	    offer,
 	    to: this.props.partner.socketid
 	  });
+	  this.setState({answer:""})
 	  this.props.changeStatus(this.props.user.socketid,"calling")
 	}
 
-	startMedia=async()=>{
-		const stream = await navigator.mediaDevices.getUserMedia( { video: true, audio: true })
-		return stream
-	}
-
-	endMedia=async(stream)=>{
-		let tracks = stream.getTracks()
-	  tracks.forEach((track)=>{
-      track.stop();
-	  });
-	}
-
+	
 	videoOff=async(stream)=>{
 		Media.videoOff();
-		// let tracks = stream.getTracks()
-		// console.log(tracks)
-		// tracks.find(track=>track.kind==="video").stop()
+		this.setState({videoOffOn:"Off"})
+		if(this.props.user.status==="talking")
+		  socket.emit("videoOffOn",{to:this.props.user.partnerId,OffOn:"Off"})
+	}
+
+	videoOn=async(stream)=>{
+		await Media.videoOn();
+		const localVideo = this.localVideo.current;
+					   if (localVideo) {
+					   	 localVideo.muted=true;
+					     localVideo.srcObject = Media.stream;
+					   }
+		this.setState({videoOffOn:"On"})
+
+		if(this.props.user.status==="talking"){
+
+			let sender = this.peerConnection.getSenders().find(function(s) {
+	        return s.track.kind === "video";
+	      });
+			sender.replaceTrack(Media.stream.getVideoTracks()[0]);
+			// this.peerConnection.addTrack(Media.stream.getVideoTracks()[0])
+		  socket.emit("videoOffOn",{to:this.props.user.partnerId,OffOn:"On"})
+		}
+
+	}
+
+	audioOff=async(stream)=>{
+		Media.audioOff();
+		this.setState({audioOffOn:"Off"})
+	}
+
+	audioOn=async(stream)=>{
+		await Media.audioOn();
+		const localVideo = this.localVideo.current;
+					   if (localVideo) {
+					   	 localVideo.muted=true;
+					     localVideo.srcObject = Media.stream;
+					   }
+		this.setState({audioOffOn:"On"})
+
+		if(this.props.user.status==="talking"){
+			let sender = this.peerConnection.getSenders().find(function(s) {
+	        return s.track.kind === "audio";
+	      });
+			sender.replaceTrack(Media.stream.getAudioTracks()[0]);
+		}
+
 	}
 
 	closeChat=(endMedia=true)=>{
 		console.log("closeChat")
-		if(this.stream && endMedia){
-			this.endMedia(this.stream)
+		if(Media.stream && endMedia){
+			Media.end()
 		}
 		if(this.peerConnection){
 			this.peerConnection.close()
 			this.peerConnection=null;
 		}
+		this.setState({answer:""})
 		this.props.changeStatus(this.props.user.socketid,"free")
 	}
 
@@ -236,9 +277,15 @@ class VoiceChat extends Component{
 						    	                   remoteVideo={this.remoteVideo} 
 						    	                   call={this.callUser} 
 						    	                   endCall={this.endCall} 
-						    	                   videoOff={()=>{this.videoOff(this.stream)}}
+						    	                   videoOff={this.videoOff}
+						    	                   videoOn={this.videoOn}
+						    	                   videoOffOn={this.state.videoOffOn}
+						    	                   remoteVideoOffOn={this.state.remoteVideoOffOn}
+						    	                   audioOn={this.audioOn}
+						    	                   audioOff={this.audioOff}
+						    	                   audioOffOn={this.state.audioOffOn}
 						    	                   status={this.props.user.status}
-						    	                   denied={this.state.denied}/>			    	   	
+						    	                   answer={this.state.answer}/>			    	   	
 						   		</MessagesWindow>
 						    }
 						    {!partner &&
