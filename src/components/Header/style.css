@@ -7,3 +7,11 @@
 	margin-bottom: 10px;
 }
 
+.navLinkItem{
+	font-size: 13px;
+	display: flex;
+	flex-direction: column;
+	/*justify-content: center;*/
+	align-items: center
+}
+

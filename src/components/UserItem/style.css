@@ -28,7 +28,7 @@
   color:rgb(193,128,166);
 }
 
-.chaticon{
+/*.chaticon{
 	float:right;
 	margin: 0 4px 2px;
 	position: absolute;
@@ -52,7 +52,7 @@
 	color: white;
 	font-size: 11px;
 	font-weight: bold; 
-}
+}*/
 
 .user_data{
 	font-size: 14px;

@@ -1,5 +1,6 @@
 import React, {Component} from "react"
 import UserIcon from "../UserIcon"
+import ChatIcon from '../ChatIcon';
 import TypingIcon from '../Helpers/TypingIcon';
 
 import "./style.css"
@@ -50,10 +51,12 @@ export default class UsersItem extends Component{
 				      </div>
 				    </div>
 				    {user.chat && 
-				      	<div className="chaticon">
-					      	{unread_messages>0 && <div className="newMessageIcon">{unread_messages}</div>}
-						    <img alt="ChatIcon" src={require("../../images/chaticon2.png")}/>	
-					    </div>}
+				    	<ChatIcon unread_messages={unread_messages} imgsrc={"chaticon2.png"} size={"20"}
+				    	          styles={{margin:" 0 4px 2px",
+																position: "absolute",
+																right:"0px",
+																bottom: "0px"}}/>
+					}
 	    		</div>
 				)
 	}
