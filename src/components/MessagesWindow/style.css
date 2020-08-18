@@ -36,6 +36,16 @@
 
 .MWbody{
 	/*padding:15px; 	*/
+	/* overflow: auto;
+	font-size: 15px;
+	display: flex;
+	flex-direction:column-reverse; */
+	display: flex;
+	flex-flow: column;
+}
+
+.messagesContainer{
+	height: 100%;
 	overflow: auto;
 	font-size: 15px;
 	display: flex;

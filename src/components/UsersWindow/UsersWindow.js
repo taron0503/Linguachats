@@ -23,7 +23,7 @@ export default class UsersWindow extends Component{
 	render(){
 		let {All_Users, Chats} = this.state
 		let users = this.props.users
-		let TextChatUsersHeight = isMobile?"calc(100 * var(--vh,1vh) - 36.375px - 56px)":"calc(100% - 36.375px)"
+		let TextChatUsersHeight = isMobile?"calc(100 * var(--vh,1vh) - 37.6px - 57.15px)":"calc(100% - 36.375px)"
 
 		return (
 			<div className="TextChatWindow">

@@ -46,10 +46,19 @@ class VoiceChat extends Component{
 		});
 
     socket.on('icecandidate',async (icecandidate)=>{
-    	this.icecandidates.push(icecandidate)
+    	console.log("getIcecandidate ",this.props.user.name)
+    	console.log(icecandidate)
+    	if(this.RemoteDescriptionSetted){
+    		// console.log("getIcecandidatePeer",this.props.user.name)
+    		this.peerConnection.addIceCandidate(icecandidate)
+    	// 	console.log(icecandidate)
+    	}else{
+    		this.icecandidates.push(icecandidate)
+    	}
     })  
 
     socket.on("call-made", async data => {
+    	await this.createPeerConnection();
     	this.offer_data=data
     	let caller = this.props.users.find(user=>user.socketid===data.socket)
     	if (caller){
@@ -69,8 +78,9 @@ class VoiceChat extends Component{
 			 this.props.changeStatus(this.props.user.socketid,"talking")
 	     await this.peerConnection.setRemoteDescription(
 	     new RTCSessionDescription(data.answer));
+	     	this.icecandidates.forEach(icecandidate=>{this.peerConnection.addIceCandidate(icecandidate)})
 	   }
-	   
+	   this.RemoteDescriptionSetted=true
     });
 
 		socket.on("endCall",()=>{
@@ -101,13 +111,13 @@ class VoiceChat extends Component{
 		if(this.props.partner)
 			socket.emit("endCall",this.props.partner.socketid)
 		this.closeChat()
-    this.props.meLeftChat(this.props.user.partnerId);
-    socket.off("icecandidate")
-    socket.off("call-made")
-    socket.off("answer-made")
-    socket.off("endCall")
-    socket.off("videoOffOn")
-    socket.off("no_answer")
+		this.props.meLeftChat(this.props.user.partnerId);
+		socket.off("icecandidate")
+		socket.off("call-made")
+		socket.off("answer-made")
+		socket.off("endCall")
+		socket.off("videoOffOn")
+		socket.off("no_answer")
 	}
 
 	handleUserItemClick=async (user)=>{
@@ -115,6 +125,7 @@ class VoiceChat extends Component{
 		let newPartner = this.props.newPartner
 		newPartner(user.socketid)
 		if(isMobile){
+			console.log("Mobile")
 			this.props.toggleMessagesWindow(true)
 			this.props.toggleUsersWindow(false)
 			this.props.toggleHeader(false)
@@ -123,7 +134,17 @@ class VoiceChat extends Component{
 	}
 
 	createPeerConnection=()=>{
-		this.peerConnection = new RTCPeerConnection()
+		let webex_config = {
+    iceServers: [
+      {urls: 'stun:stun.l.google.com:19302'},
+      {
+        url: 'turn:numb.viagenie.ca',
+        credential: 'muazkh',
+        username: 'webrtc@live.com',
+      },
+    ],
+  }
+		this.peerConnection = new RTCPeerConnection(webex_config)
 		this.peerConnection.ontrack = ({ streams: [stream] })=> {
 			console.log('got track', stream);
 	  const remoteVideo = this.remoteVideo.current;
@@ -132,8 +153,8 @@ class VoiceChat extends Component{
 		 }
     };
     this.peerConnection.onicecandidate = (event) => {
-		  	console.log("icecandidate")
-		  	// console.log(event)
+		  	console.log("onicecandidate+",this.props.user.name)
+		  	console.log(event.candidate)
 			  if (event.candidate) {
 			    socket.emit("icecandidate",{candidate:event.candidate,to:this.props.partner.socketid})
 			  } else {
@@ -150,6 +171,7 @@ class VoiceChat extends Component{
 	  await this.peerConnection.setRemoteDescription(
 	   new RTCSessionDescription(data.offer)
 	  );
+	  this.RemoteDescriptionSetted=true
 	  this.icecandidates.forEach(icecandidate=>{this.peerConnection.addIceCandidate(icecandidate)})
 		
 		const answer = await this.peerConnection.createAnswer();
@@ -265,13 +287,14 @@ class VoiceChat extends Component{
 				<div className="container-fluid TextChat">
 				  <div className="row no-gutter">
 				    <div className="col-sm-4">
+					{this.props.UsersWindow.show &&
 				    <UsersWindow users={this.props.users} 
-				    						 main_user={this.props.user}
-				    						 handleUserItemClick={this.handleUserItemClick}/>
+				    			 main_user={this.props.user}
+				    			 handleUserItemClick={this.handleUserItemClick}/>}
 				    </div>
 				    <div className="col-sm-8">
 				    		{partner && 
-				    			 <MessagesWindow partner={partner}>
+				    			 <MessagesWindow partner={partner}  hideBackArrow={true}>
 						    	   <VideoChatModal partner={partner}
 						    	                   localVideo={this.localVideo} 
 						    	                   remoteVideo={this.remoteVideo} 

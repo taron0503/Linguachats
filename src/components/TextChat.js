@@ -9,19 +9,19 @@ import socket from "../services/socket.js"
 
 class TextChat extends Component{
 
-	componentDidMount=()=>{
-		socket.on('send_message', this.handleOnMessage);
-	}
+	// componentDidMount=()=>{
+	// 	socket.on('send_message', this.handleOnMessage);
+	// }
 
-	componentWillUnmount=()=>{
-    socket.off('send_message', this.handleOnMessage);
-    this.props.meLeftChat(this.props.user.partnerId);
-   }
+// 	componentWillUnmount=()=>{
+//     socket.off('send_message', this.handleOnMessage);
+//     this.props.meLeftChat(this.props.user.partnerId);
+//    }
 
-	handleOnMessage=(msg)=>{
-		this.props.addMessage(msg)
-		this.props.endTyping(msg.sender)
-	}
+	// handleOnMessage=(msg)=>{
+	// 	this.props.addMessage(msg)
+	// 	this.props.endTyping(msg.sender)
+	// }
 
 	handleUserItemClick = (user)=>{
 		let newPartner = this.props.newPartner

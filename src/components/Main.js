@@ -20,6 +20,8 @@ import socket from "../services/socket.js"
 class Main extends Component{
 	constructor(props){
 		super(props)
+		document.querySelector(':root').style
+		    .setProperty('--vh', window.innerHeight/100 + 'px');
 		window.addEventListener('resize', () => { 
 		  document.querySelector(':root').style
 		    .setProperty('--vh', window.innerHeight/100 + 'px');
@@ -33,6 +35,7 @@ class Main extends Component{
 	    	this.props.toggleInitReg(true)
 	    }
 	}
+
 
 	componentDidMount=()=>{
 		socket.on('AllOnlineUsers',(users)=>{
@@ -61,6 +64,8 @@ class Main extends Component{
 			this.props.deleteUserFromVoiceChat(socketid)
 		})
 
+		socket.on('send_message', this.handleOnMessage);
+
 		socket.on("startTyping",(partner)=>{
 			this.props.startTyping(partner.socketid)
 		})
@@ -72,6 +77,15 @@ class Main extends Component{
 		})
 
 
+	}
+
+	componentWillUnmount=()=>{
+		socket.off('send_message', this.handleOnMessage);
+	}
+
+	handleOnMessage=(msg)=>{
+		this.props.addMessage(msg)
+		this.props.endTyping(msg.sender)
 	}
 
 	handleRegisterConfirmation=(user)=>{

@@ -14,6 +14,13 @@ import socket from "../../services/socket.js"
 
 class MessagesWindow extends Component{
 
+
+	componentWillUnmount=()=>{
+		socket.off('send_message', this.handleOnMessage);
+		this.props.meLeftChat(this.props.user.partnerId);
+	}
+
+
 	closeChat=()=>{
 		socket.emit("left_chat",{user:this.props.user,partner:this.props.partner})
 		this.props.meLeftChat()
@@ -58,7 +65,7 @@ class MessagesWindow extends Component{
 		return (
 			<div className="MessagesWindow">
 				<div className="MWheader">
-					{isMobile &&
+					{(isMobile && !this.props.hideBackArrow) &&
 					<button type="button" className="backButton" onClick={this.collapseChat}>
 						<svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 					    <path fillRule="evenodd" d="M5.854 4.646a.5.5 0 0 1 0 .708L3.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"/>
@@ -71,28 +78,30 @@ class MessagesWindow extends Component{
 					  <span aria-hidden="true">&times;</span>
 					</button>
 				</div>
+				<div style = {{height:MWbodyHeight}} className="MWbody">
 				{this.props.children}
-				<ScrollToBottom style = {{height:MWbodyHeight}} className="MWbody Cscroll">
-				{partner.typing &&
-					<div className = "chatMessageL">
-							<div className="message_sender_name">
-							  {partner.name}
-							</div>
-							<TypingIcon size={6}/>
-					</div>
-			  }
-				{partner.messages.map((message,index)=>{
-					return <div key={index} className = {message.from==="partner"?"chatMessageL":"chatMessageR"}>
-						<div className="message_sender_name">
-						  {message.from==="partner"?partner.name:user.name}
+				<ScrollToBottom className="messagesContainer Cscroll">
+					{partner.typing &&
+						<div className = "chatMessageL">
+								<div className="message_sender_name">
+								{partner.name}
+								</div>
+								<TypingIcon size={6}/>
 						</div>
-						{this.getEmojiIfOne(message.text)?<div className="chatMessageText" style={{"background":"white"}} dangerouslySetInnerHTML={this.getEmojiIfOne(message.text)}></div>:
-						<div className="chatMessageText" dangerouslySetInnerHTML={message.text}></div>}
-						<div className="message_time">{message.time}</div>
-					</div>
-					})
-				}
+					}
+					{partner.messages.map((message,index)=>{
+						return <div key={index} className = {message.from==="partner"?"chatMessageL":"chatMessageR"}>
+							<div className="message_sender_name">
+							{message.from==="partner"?partner.name:user.name}
+							</div>
+							{this.getEmojiIfOne(message.text)?<div className="chatMessageText" style={{"background":"white"}} dangerouslySetInnerHTML={this.getEmojiIfOne(message.text)}></div>:
+							<div className="chatMessageText" dangerouslySetInnerHTML={message.text}></div>}
+							<div className="message_time">{message.time}</div>
+						</div>
+						})
+					}
 				</ScrollToBottom>
+				</div>
 				<div className="MWfooter">
 					<MessageBoard/>
 				</div>
