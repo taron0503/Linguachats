@@ -4,6 +4,7 @@ import * as actions from '../../actions';
 import {EmojiPicker,get_emoji_byName}  from '../Helpers/EmojiPicker'
 import ContentEditable from 'react-contenteditable'
 import ScrollToBottom from '../Helpers/ScrollToBottom';
+import {isMobile} from "react-device-detect";
 import "./style.css"
 
 import socket from "../../services/socket.js"
@@ -18,17 +19,19 @@ class MessageBoard extends Component{
 
 	componentDidMount=()=>{
 		let that = this
-		this.contentEditable.current.focus()
 		this.contentEditable.current.addEventListener('input',()=>{
 			that.setState({msg: that.contentEditable.current.innerHTML});
 			that.props.hide_EmojiPicker()})
+		if(!isMobile)
+		    this.contentEditable.current.focus()
 	}
 
 	componentDidUpdate(prevProps){
 		if(prevProps.partner.socketid!==this.props.partner.socketid){
 			this.setState({msg:""})
 		}
-		this.contentEditable.current.focus()
+		if(!isMobile)
+		  this.contentEditable.current.focus()
 	}
 
 	handleChange = evt => {
@@ -155,7 +158,6 @@ class MessageBoard extends Component{
 	
 
 	render(){
-		console.log(this.props.user)
 		return (
 			<React.Fragment>
 				<div className="type_msg_wrapper">

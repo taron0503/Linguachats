@@ -1,7 +1,7 @@
 let users = []
 let user = {name:"",surname:"",age:"",gender:"Male",country:"United Kingdom",speaks:["English"],learns:["Spanish"]}
 let initialstate = {users:users,
-					//partner:null,
+					loggedIn:false,
           UserIsOnline:false,
 					user:user,
 					InitReg:{show:false,edit:false},
@@ -11,24 +11,23 @@ let initialstate = {users:users,
 const main_reducer = (state = initialstate, action) => {
   switch(action.type){
   	case "newPartner":{
-      if(!action.partnerId){
-        return {...state,partner:null}
-      }
   		let partnerId = action.partnerId
-      let user = {...state.user}
-      user.partnerId = partnerId
+      let main_user = {...state.user}
+      main_user.partnerId = partnerId
       let users = [...state.users]
       users.forEach((user)=>{
-        if(user=>user.socketid === partnerId){
+        if(user.socketid === partnerId){
           user.messages.forEach(message=>message.unread=false)
           // user.partner = true
         }
-      })
-     
+      })    
   		// let partner = state.users.filter(user=>user.name == partnerId)
       //partner.messages.forEach(message=>message.unread=false)
-  		return {...state,user:user,users:users};
-  	}
+  		return {...state,user:main_user,users:users};
+    }
+    case "deletePartner":{
+      return {...state,user:{...state.user,partnerId:undefined}}
+    }
     case "AllOnlineUsers":{
       let users = action.users
       users.forEach(user=>{user.messages=[]; user.fullname=user.name+" "+user.surname})
@@ -64,6 +63,10 @@ const main_reducer = (state = initialstate, action) => {
     }
     case "addUserToVoiceChat":{
       let users=[...state.users]
+      let main_user = {...state.user}
+      if(main_user.socketid===action.socketid){
+        main_user.rooms.push("voiceChat")
+      }
       users = users.map(user=>{
         if(user.socketid && user.socketid === action.socketid){
           if(!user.rooms.includes("voiceChat")){
@@ -72,10 +75,17 @@ const main_reducer = (state = initialstate, action) => {
         }
         return user
       })
-      return {...state,users:users}
+      return {...state,user:main_user,users:users}
     }
     case "deleteUserFromVoiceChat":{
       let users=[...state.users]
+      let main_user = {...state.user}
+      if(main_user.socketid === action.socketid){
+        const index = main_user.rooms.indexOf("voiceChat");
+          if (index > -1) {
+            main_user.rooms.splice(index, 1);
+          }
+      }
       users = users.map(user=>{
         if(user.socketid === action.socketid){
           const index = user.rooms.indexOf("voiceChat");
@@ -85,7 +95,7 @@ const main_reducer = (state = initialstate, action) => {
         }
         return user
       })
-      return {...state,users:users}
+      return {...state,user:main_user,users:users}
     }
     case "deleteUser":{
       let user2 = action.user
@@ -146,6 +156,10 @@ const main_reducer = (state = initialstate, action) => {
       InitReg.edit = edit
       return {...state,InitReg:InitReg};
     }
+    case "turnLoggedIn":{
+      let loggedIn = action.loggedIn
+      return {...state,loggedIn:loggedIn}
+    }
     case "addMessage":{
       let msg = action.msg
       let message = {text:{__html:msg.text},time:msg.time,unread:true}
@@ -192,7 +206,7 @@ const main_reducer = (state = initialstate, action) => {
       let users = [...state.users]
       let mainuser = {...state.user}
       if(mainuser.partnerId === action.socketid)
-            mainuser.partnerId = null
+            mainuser.partnerId = undefined
       users = users.map(user=>{
         if(user.socketid === action.socketid){
           user.chat = false

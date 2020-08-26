@@ -12,6 +12,7 @@ class CallingModal extends Component{
 	acceptCall = ()=>{
 		this.props.newPartner(this.props.caller.socketid)
 		this.props.changeStatus(this.props.user.socketid,"talking")
+		this.props.toggleHeader(false)
 		this.props.sendAnswer()
     //await this.showMe()
 		//socket.emit("make-answer-signal",{to:this.props.caller.socketid,accept:true})
@@ -44,7 +45,9 @@ class CallingModal extends Component{
 const mapStateToProps = (state) => {
   return {
     user: state.main_reducer.user,
-    CallingModal:state.WindowToggle.CallingModal
+	CallingModal:state.WindowToggle.CallingModal,
+	//Header:state.WindowToggle.Header
+	
   };
 };
 

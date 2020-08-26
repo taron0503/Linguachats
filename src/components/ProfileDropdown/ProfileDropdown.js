@@ -4,6 +4,7 @@ import * as actions from '../../actions';
 import {Dropdown} from 'react-bootstrap';
 import {isMobile} from "react-device-detect";
 import UserIcon from "../UserIcon";
+import CookieManager from "../Helpers/CookieManager"
 import styles from "./style.module.css"
 
 
@@ -21,12 +22,11 @@ class ProfileDropdown extends Component{
 	));*/
 
  	handleEdit=()=>{
- 		this.props.toggleInitReg(true)
  		this.props.toggleInitRegToEdit(true)
  	}
 
  	handleLogOut=()=>{
- 		localStorage.removeItem("user");
+		CookieManager.deleteCookie("id")
  		window.location.href = '/';
  	}
 

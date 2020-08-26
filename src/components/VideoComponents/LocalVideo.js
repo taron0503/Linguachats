@@ -7,6 +7,7 @@ import videoOn_Icon from "../../images/videoOn_Icon.png"
 import videoOff_Icon from "../../images/videoOff_Icon.png"
 import audioOn_Icon from "../../images/audioOn_Icon.png"
 import audioOff_Icon from "../../images/audioOff_Icon.png"
+import {isMobile} from "react-device-detect";
 import "./style.css"
 
 export default class LocalVideo extends Component{
@@ -25,13 +26,13 @@ export default class LocalVideo extends Component{
 		let videoOffOn = this.props.videoOffOn
 		let audioOffOn = this.props.audioOffOn
 		return(
-					<div className="localVideoWrapper">
+					<div className={"localVideoWrapper "+(isMobile && "localVideoWrapperM")}>
 					  <video autoPlay
 						       ref = {this.props.localVideo} 
 						       id = "local-video" 
 						       className="localVideo"></video>
 						 
-							{status==="talking" &&<div className="buttonContainerLV">
+							{status==="talking" &&<div className={"buttonContainerLV "+(isMobile && "buttonContainerLVM")}>
 								{audioOffOn==="Off"?
 									<div className="LV_Icon">
 									    <img src={audioOff_Icon}  onClick ={()=>{this.props.audioOn()}}/>

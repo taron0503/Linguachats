@@ -3,6 +3,8 @@ import UserIcon from "../UserIcon"
 
 import videoCall_Icon from "../../images/videoCall_Icon.png"
 import hangUp_Icon from "../../images/hangUp_Icon.png"
+import {isMobile} from "react-device-detect";
+
 import "./style.css"
 
 export default class RemoteVideo extends Component{
@@ -12,15 +14,13 @@ export default class RemoteVideo extends Component{
 	}
 
 	render(){
-		console.log("RemoteVideo")
-		console.log(this.props)
 		let partner = this.props.partner
 		let status = this.props.status
 		let answer = this.props.answer
 
 		let remoteVideoOffOn = this.props.remoteVideoOffOn
 		return(
-				<div className="remoteVideoWrapper">
+				<div className={"remoteVideoWrapper " + (isMobile && "remoteVideoWrapperM")}>
 
 				{status==="talking" &&
 					<>

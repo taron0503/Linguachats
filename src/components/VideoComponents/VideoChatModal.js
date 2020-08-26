@@ -2,6 +2,7 @@ import React, {Component} from "react"
 
 import LocalVideo from "./LocalVideo"
 import RemoteVideo from "./RemoteVideo"
+import {isMobile} from "react-device-detect";
 
 import "./style.css"
 
@@ -27,8 +28,8 @@ export default class VideoChatModal extends Component{
     let remoteVideoOffOn=this.props.remoteVideoOffOn
     let answer=this.props.answer		
 		return(
-			<div className = "VideoChatModal">
-				<div className = "videoContainer">
+			<div className = {"videoChatModal " + (isMobile && "videoChatModalM")}>
+				<div className = {"videoContainer " + (isMobile && "videoContainerM")}>
 					<RemoteVideo 
 					   partner={partner} 
 					   status={status} 

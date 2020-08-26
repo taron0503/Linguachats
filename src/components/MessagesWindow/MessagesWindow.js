@@ -5,6 +5,7 @@ import {isMobile} from "react-device-detect";
 import ScrollToBottom from '../Helpers/ScrollToBottom';
 import TypingIcon from '../Helpers/TypingIcon';
 import MessageBoard from '../MessageBoard'
+import { withRouter} from "react-router";
 import {get_emoji_byName}  from '../Helpers/EmojiPicker'
 
 import "./style.css"
@@ -13,28 +14,44 @@ import socket from "../../services/socket.js"
 
 
 class MessagesWindow extends Component{
-
-
-	componentWillUnmount=()=>{
-		socket.off('send_message', this.handleOnMessage);
-		this.props.meLeftChat(this.props.user.partnerId);
+	componentDidMount=()=>{
+		window.onpopstate = (event)=> {
+			if(this.props.onBack==="collapseChat")
+			   this.collapseChat()
+			if(this.props.onBack==="closeChat")
+			   this.closeChat()
+		  };
 	}
 
+	componentWillUnmount=()=>{
+		//socket.off('send_message', this.handleOnMessage);
+		//this.props.meLeftChat(this.props.user.partnerId);
+	}
+
+	closeChatandBack=()=>{
+		this.props.history.goBack()
+		this.closeChat()
+	}
 
 	closeChat=()=>{
 		socket.emit("left_chat",{user:this.props.user,partner:this.props.partner})
 		this.props.meLeftChat()
-		// this.props.changeStatus(this.props.user.socketid,"free")
 		this.props.toggleMessagesWindow(false)
 		this.props.toggleUsersWindow(true)
 		this.props.toggleHeader(true)
-		// this.props.newPartner();
+		// this.props.history.goBack()
+	}
+
+	collapseChatandBack=()=>{
+		this.props.history.goBack()
+		this.collapseChat()
 	}
 
 	collapseChat=()=>{
 		this.props.toggleMessagesWindow(false)
 		this.props.toggleUsersWindow(true)	
 		this.props.toggleHeader(true)
+		// this.props.history.goBack()
 	}
 
 	getEmojiIfOne(msg){
@@ -61,12 +78,16 @@ class MessagesWindow extends Component{
 	render(){
 		let partner = this.props.partner
 		let user = this.props.user
+		let chatRoom = "textChat"
+		if(user.rooms && user.rooms.includes("voiceChat")){
+			chatRoom="videoChat"
+		}
 		let MWbodyHeight = "calc(100 * var(--vh,1vh) - 37px - 44px)"//isMobile?"calc(100% - 37px - 44px)":"calc(100% - 37px - 44px)"
 		return (
 			<div className="MessagesWindow">
 				<div className="MWheader">
 					{(isMobile && !this.props.hideBackArrow) &&
-					<button type="button" className="backButton" onClick={this.collapseChat}>
+					<button type="button" className="backButton" onClick={this.collapseChatandBack}>
 						<svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 					    <path fillRule="evenodd" d="M5.854 4.646a.5.5 0 0 1 0 .708L3.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"/>
 					    <path fillRule="evenodd" d="M2.5 8a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
@@ -74,13 +95,13 @@ class MessagesWindow extends Component{
 					</button>
 					}
 					{partner.name}
-					<button type="button" className="close" aria-label="Close" onClick={this.closeChat}>
+					<button type="button" className="close" aria-label="Close" onClick={this.closeChatandBack}>
 					  <span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div style = {{height:MWbodyHeight}} className="MWbody">
+				<div style = {{height:MWbodyHeight}} className={"MWbody " + (isMobile && "MWbodyM")}>
 				{this.props.children}
-				<ScrollToBottom className="messagesContainer Cscroll">
+				<ScrollToBottom className={"messagesContainer Cscroll "+(chatRoom==="videoChat" && "messagesContainerM")}>
 					{partner.typing &&
 						<div className = "chatMessageL">
 								<div className="message_sender_name">
@@ -120,4 +141,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps,actions)(MessagesWindow)
+export default connect(mapStateToProps,actions)(withRouter(MessagesWindow))

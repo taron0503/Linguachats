@@ -1,6 +1,8 @@
 import React, {Component} from "react"
 import UsersWindow from "./UsersWindow"
 import MessagesWindow from "./MessagesWindow"
+
+import { withRouter} from "react-router";
 import {isMobile} from "react-device-detect";
 import { connect } from 'react-redux';
 import * as actions from '../actions';
@@ -9,33 +11,29 @@ import socket from "../services/socket.js"
 
 class TextChat extends Component{
 
-	// componentDidMount=()=>{
-	// 	socket.on('send_message', this.handleOnMessage);
-	// }
-
-// 	componentWillUnmount=()=>{
-//     socket.off('send_message', this.handleOnMessage);
-//     this.props.meLeftChat(this.props.user.partnerId);
-//    }
-
-	// handleOnMessage=(msg)=>{
-	// 	this.props.addMessage(msg)
-	// 	this.props.endTyping(msg.sender)
-	// }
+	componentWillUnmount=()=>{
+      this.props.deletePartner()
+	}
+	
 
 	handleUserItemClick = (user)=>{
 		let newPartner = this.props.newPartner
-		newPartner()
 		newPartner(user.socketid)
 		if(isMobile){
 			this.props.toggleMessagesWindow(true)
 			this.props.toggleUsersWindow(false)
 			this.props.toggleHeader(false)
 		}
+
+		if(!(this.props.location.pathname==="/TextChat/partner")){
+			 this.props.history.push("/TextChat/partner")
+		}
+		 
 	}
 
 	render(){
 		let partner = this.props.partner
+		let onBack = "collapseChat"
 		return (
 			<div className="container-fluid TextChat">
 			  <div className="row no-gutter">
@@ -47,10 +45,10 @@ class TextChat extends Component{
 			    </div>
 			    <div className="col-sm-8">
 			    {(isMobile && this.props.MessagesWindow.show && partner) &&
-			    	<MessagesWindow partner={partner}/>
+			    	<MessagesWindow partner={partner} onBack={onBack}/>
 			    }
 			    {(!isMobile && partner) &&
-			      <MessagesWindow partner={partner}/>
+			      <MessagesWindow partner={partner} onBack={onBack}/>
 			    }
 			    {(!isMobile && !partner) &&
 			      <div className="EmptyMessageWindow">Find someone to talk</div>
@@ -76,4 +74,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps,actions)(TextChat)
+export default withRouter(connect(mapStateToProps,actions)(TextChat))

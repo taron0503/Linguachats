@@ -51,17 +51,18 @@ class InitialRegModal extends Component{
 
 	render(){
 		let user=this.props.user
-		// console.log(user)
+		console.log(user)
 		return(
 				<Formik
+				      enableReinitialize={true}
 				      initialValues={{ name: user.name,
-				      								 surname:user.surname,
-				      								 age:user.age,
-				      								 gender:user.gender,
-				      								 country:user.country,
-				      								 speaks:user.speaks,
-				      								 learns:user.learns,
-				      								 "muk":"dzuk", }}
+										surname:user.surname,
+										age:user.age.toString(),
+										gender:user.gender,
+										country:user.country,
+										speaks:user.speaks,
+										learns:user.learns,
+										muk:"dzuk", }}
 				      validationSchema={Yup.object({
 						        name: Yup.string()
 						          .max(20, 'Must be 2-20 characters')
@@ -80,17 +81,12 @@ class InitialRegModal extends Component{
 						          .min(1,"Must be at least one language"),
 						  })}
 				      onSubmit={(values, actions) => {
-				        // console.log(JSON.stringify(values, null, 2));
-				        values.fullname=values.name+" "+values.surname
-				        values.img = values.gender==="Male"?"avatarM.png":"avatarF.png"
-				        values.rooms = ["textChat"]
-				        values.status="free"
 				        this.props.handleModalConfirmation(values)
 				        actions.resetForm({});
 				      }}
 				    >
 				    {({values,errors,touched,handleChange,handleBlur, isSubmitting, handleSubmit,setFieldValue,resetForm})=>{/*console.log(values)*/;return(
-				<Modal show={this.props.show} onHide={this.handleClose}>
+				<Modal show={this.props.show || this.props.edit} onHide={this.handleClose}>
 				          <form onSubmit={handleSubmit}>
 		        <Modal.Header>
 		          <Modal.Title>{this.props.edit?"Edit":"Register"}</Modal.Title>

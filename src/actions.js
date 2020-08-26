@@ -1,4 +1,12 @@
-export const newPartner = (partnerId) => ({ type: 'newPartner',partnerId:partnerId });
+import history from "./services/history.js"
+
+export const newPartner = (partnerId) => {
+    // window.history.pushState(null,null,window.location.href+"/"+partnerId)
+    // history.replace(window.location.href+"/"+partnerId)
+    // console.log(history)
+    return { type: 'newPartner',partnerId:partnerId }
+};
+export const deletePartner = ()=>({type:"deletePartner"})
 export const meLeftChat = () => ({ type: 'meLeftChat'});
 export const userLeftChat = (socketid) => ({ type: 'userLeftChat',socketid:socketid});
 export const setUser = (user) => ({ type: 'setUser',user:user });
@@ -7,6 +15,7 @@ export const toggleInitRegToEdit = (edit) => ({ type: 'toggleInitRegToEdit',edit
 export const toggleUsersWindow = (show) => ({ type: 'toggleUsersWindow',show:show });
 export const toggleMessagesWindow = (show) => ({ type: 'toggleMessagesWindow',show:show });
 export const toggleHeader = (show) => ({ type: 'toggleHeader',show:show });
+export const turnLoggedIn = (loggedIn) => ({ type: 'turnLoggedIn',loggedIn:loggedIn });
 // export const toggleCallingModal = (show) => ({ type: 'toggleCallingModal',show:show });
 export const changeStatus = (socketid,status) => ({ type: 'changeStatus',socketid:socketid,status:status});
 export const addUser = (user) => ({ type: 'addUser',user:user });

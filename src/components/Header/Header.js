@@ -10,6 +10,11 @@ import "./style.css"
 export default class Header extends Component{  
 	render(){
 		let user = this.props.user
+		let chatRoom = "textChat"
+		if(user.rooms && user.rooms.includes("voiceChat")){
+			chatRoom="videoChat"
+		}
+
 		return (
 
 			<div>
@@ -17,13 +22,13 @@ export default class Header extends Component{
 				    <Navbar.Brand as={Link} to="/">LinguaChats</Navbar.Brand>
 				    <Nav className="mr-auto" activeKey="/VoiceChat">
 				      <Link to="/TextChat" className="nav-link">
-				      	<div className="navLinkItem">
+				      	<div className={"navLinkItem "+((chatRoom==='textChat') && "navLinkItemSelected")}>
 				      	  <ChatIcon imgsrc={"chat_Icon.png"} size={"20"}/>
 				      	  TextChat
 				      	</div>
 				      </Link>
 				      <Link to="/VoiceChat" className="nav-link">
-				      	<div className="navLinkItem">
+					  <div className={"navLinkItem "+((chatRoom==='videoChat') && "navLinkItemSelected")}>
 				      		<ChatIcon imgsrc={"videoCall_Icon3.png"} size={"20"}/>
 				      		VideoChat
 				      	</div>		
@@ -39,13 +44,13 @@ export default class Header extends Component{
 				    <Navbar.Brand className="mr-0" as={Link} to="/">LinguaChats</Navbar.Brand>
 				    <Nav activeKey="/VoiceChat">
 				      <Link to="/TextChat" className="nav-link">
-				      	<div className="navLinkItem">
+					  <div className={"navLinkItem "+(chatRoom==='textChat' && "navLinkItemSelected")}>
 				      	  <ChatIcon imgsrc={"chat_Icon.png"} size={"20"}/>
 				      	  TextChat
 				      	</div>
 				      </Link>
 				      <Link to="/VoiceChat" className="nav-link">
-				      	<div className="navLinkItem">
+					  <div className={"navLinkItem "+(chatRoom==='videoChat' && "navLinkItemSelected")}>
 				      		<ChatIcon imgsrc={"videoCall_Icon3.png"} size={"20"}/>
 				      		VideoChat
 				      	</div>		

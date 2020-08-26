@@ -5,6 +5,7 @@ import {VideoChatModal} from "./VideoComponents"
 import {isMobile} from "react-device-detect";
 import CallingModal from "./CallingModal"
 import Media from "../services/Media"
+import { withRouter} from "react-router";
 
 import { connect } from 'react-redux';
 import * as actions from '../actions';
@@ -121,6 +122,9 @@ class VoiceChat extends Component{
 	}
 
 	handleUserItemClick=async (user)=>{
+		if(!(this.props.location.pathname==="/VoiceChat/partner")){
+			this.props.history.push("/VoiceChat/partner")
+		}
 		this.endCall(false);
 		let newPartner = this.props.newPartner
 		newPartner(user.socketid)
@@ -134,16 +138,26 @@ class VoiceChat extends Component{
 	}
 
 	createPeerConnection=()=>{
-		let webex_config = {
-    iceServers: [
-      {urls: 'stun:stun.l.google.com:19302'},
-      {
-        url: 'turn:numb.viagenie.ca',
-        credential: 'muazkh',
-        username: 'webrtc@live.com',
-      },
-    ],
-  }
+// 		let webex_config = {
+//     iceServers: [
+//       {urls: 'stun:stun.l.google.com:19302'},
+//       {
+//         url: 'turn:numb.viagenie.ca',
+//         credential: 'muazkh',
+//         username: 'webrtc@live.com',
+//       },
+//     ],
+//   }
+
+		let webex_config = { iceServers: [
+			{urls: 'stun:stun.l.google.com:19302'},
+			{
+				url: 'turn:89.223.127.78:3478',
+				credential: '0000',
+				username: 'taron'
+				},
+		]}
+
 		this.peerConnection = new RTCPeerConnection(webex_config)
 		this.peerConnection.ontrack = ({ streams: [stream] })=> {
 			console.log('got track', stream);
@@ -280,6 +294,8 @@ class VoiceChat extends Component{
 
 	render(){
 		let partner = this.props.partner
+		console.log(partner)
+		let onBack = "closeChat"
 		return (
 			<React.Fragment>
 			{this.state.caller && <CallingModal caller={this.state.caller} changeStatus={this.changeStatus} sendAnswer={this.sendAnswer}/>}
@@ -287,14 +303,14 @@ class VoiceChat extends Component{
 				<div className="container-fluid TextChat">
 				  <div className="row no-gutter">
 				    <div className="col-sm-4">
-					{this.props.UsersWindow.show &&
+					{((!partner && isMobile) || !isMobile) &&
 				    <UsersWindow users={this.props.users} 
 				    			 main_user={this.props.user}
 				    			 handleUserItemClick={this.handleUserItemClick}/>}
 				    </div>
 				    <div className="col-sm-8">
 				    		{partner && 
-				    			 <MessagesWindow partner={partner}  hideBackArrow={true}>
+				    			 <MessagesWindow partner={partner}  hideBackArrow={true} onBack={onBack}>
 						    	   <VideoChatModal partner={partner}
 						    	                   localVideo={this.localVideo} 
 						    	                   remoteVideo={this.remoteVideo} 
@@ -339,4 +355,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps,actions)(VoiceChat)
+export default withRouter(connect(mapStateToProps,actions)(VoiceChat))

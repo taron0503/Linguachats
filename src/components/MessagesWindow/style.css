@@ -40,8 +40,13 @@
 	font-size: 15px;
 	display: flex;
 	flex-direction:column-reverse; */
+	position: relative;
 	display: flex;
 	flex-flow: column;
+}
+
+.MWbodyM{
+	flex-flow: column-reverse;
 }
 
 .messagesContainer{
@@ -50,6 +55,10 @@
 	font-size: 15px;
 	display: flex;
 	flex-direction:column-reverse;
+}
+
+.messagesContainerM{
+	height: 41%;
 }
 
 .chatMessageText{
