@@ -1,0 +1,18 @@
+.ProfileImagesContainer{
+    display:flex;
+    flex-wrap: wrap;
+}
+
+.ProfileImagewrapper{
+    border:1px solid gainsboro;
+    flex:1 1 auto;
+    width:23%;
+    margin:1%;
+    overflow:hidden;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ProfileImagewrapper img{
+    width: 100%;
+}

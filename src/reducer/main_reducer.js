@@ -1,5 +1,5 @@
 let users = []
-let user = {name:"",surname:"",age:"",gender:"Male",country:"United Kingdom",speaks:["English"],learns:["Spanish"]}
+let user = {name:"",surname:"",age:"",gender:"Male",country:"United Kingdom",profile_image_src:"avatarM.png",speaks:["English"],learns:["Spanish"]}
 let initialstate = {users:users,
 					loggedIn:false,
           UserIsOnline:false,

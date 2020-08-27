@@ -10,3 +10,16 @@
 	color:red;
 	font-size: 0.8rem;
 }
+
+.profileImageWrapper{
+	border: 1px solid gainsboro;
+    width: 100%;
+    /* height: 100%; */
+    border-radius: 50%;
+	overflow: hidden;
+	cursor:pointer;
+}
+
+.profileImageWrapper img{
+	width: 100%;
+}

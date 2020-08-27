@@ -2,26 +2,29 @@ const express = require("express")
 const User = require("./models/User") 
 const router = express.Router()
 const path = require('path');
+const sanitizeHtml = require("sanitize-html")
 
 router.post("/saveUser", async (req, res) => {
     try{
     //    const {name,surname,age,gender,country,speaks,learns} = req.body.user
-    const user = new User(req.body.user)
-    //    console.log(req.body)
-        // const user = new User({
-        //     name:"Elon",
-        //     surname:"Musk",
-        //     age:"45",
-        //     gender:"Male",
-        //     country:"United Kingdom",
-        //     speaks:["English"],
-        //     learns:["Spanish"]
-        // });
+        let user = req.body.user
+        user = {
+            name:sanitizeHtml(user.name).trim(),
+            surname:sanitizeHtml(user.surname).trim(),
+            age:user.age,
+            gender:user.gender,
+            country:user.country,
+            profile_image_src:user.profile_image_src,
+            learns:user.learns,
+            speaks:user.speaks
+        }
+        user = new User(user)
         let savedUser = await user.save()
         if(savedUser && savedUser._id){
             res.send({saved:true,id:savedUser._id})
         }
-    }catch{
+    }catch(e){
+        console.log(e)
         res.send({saved:false})
     }
   })

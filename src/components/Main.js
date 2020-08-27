@@ -105,6 +105,8 @@ class Main extends Component{
 	}
 
 	handleRegisterConfirmation = async (user)=>{
+		console.log("1")
+		console.log(user)
 		let id = await UserManager.saveUser(user)
 		if(id){
 		    CookieManager.setCookie("id", id, 1000);

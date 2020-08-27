@@ -7,6 +7,7 @@ const userScheme = new Schema({
     age:Number,
     gender:String,
     country:String,
+    profile_image_src:String,
     speaks:[String],
     learns:[String]
 });

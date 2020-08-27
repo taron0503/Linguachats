@@ -8,7 +8,7 @@ async function getUser(id){
         user.id=user._id
         delete user._id
         user.fullname=user.name+" "+user.surname
-        user.img = user.gender==="Male"?"avatarM.png":"avatarF.png"
+        user.img = user.profile_image_src
         user.rooms = ["textChat"]
         user.status="free"
         return user
