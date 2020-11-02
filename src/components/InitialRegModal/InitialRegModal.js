@@ -156,7 +156,7 @@ class InitialRegModal extends Component{
 								<div className="col-3">
 									<div className="profileImageWrapper"  
 										onClick={()=>{this.setState({showProfileImagesModal:true})}}>
-										<img src = {imgsrc} ref={this.imgRef}/>
+										<img src = {imgsrc} ref={this.imgRef} alt="Profile"/>
 									</div>
 								</div>
 							</div>

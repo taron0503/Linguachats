@@ -47,48 +47,50 @@ const main_reducer = (state = initialstate, action) => {
   		return {...state,users:users}
   	}
     case "changeStatus":{
+      let status = action.status
+      let main_user={...state.user,status:status}
+      return {...state,user:main_user}
+    }
+    case "changeUserStatus":{
+      console.log("changeUserStatus")
       let users = [...state.users]
       let socketid = action.socketid
       let status = action.status
-      let main_user={...state.user}
-      if(socketid===main_user.socketid){
-        main_user.status=status
-      }
       users = users.map(user=>{
         if(user.socketid===socketid)
           user={...user,status:status}
         return user
       })
-      return {...state,user:main_user,users:users}
+      return {...state,users:users}
     }
-    case "addUserToVoiceChat":{
+    case "addUserToVideoChat":{
       let users=[...state.users]
       let main_user = {...state.user}
       if(main_user.socketid===action.socketid){
-        main_user.rooms.push("voiceChat")
+        main_user.rooms.push("videoChat")
       }
       users = users.map(user=>{
         if(user.socketid && user.socketid === action.socketid){
-          if(!user.rooms.includes("voiceChat")){
-            user.rooms.push("voiceChat")
+          if(!user.rooms.includes("videoChat")){
+            user.rooms.push("videoChat")
           }
         }
         return user
       })
       return {...state,user:main_user,users:users}
     }
-    case "deleteUserFromVoiceChat":{
+    case "deleteUserFromVideoChat":{
       let users=[...state.users]
       let main_user = {...state.user}
       if(main_user.socketid === action.socketid){
-        const index = main_user.rooms.indexOf("voiceChat");
+        const index = main_user.rooms.indexOf("videoChat");
           if (index > -1) {
             main_user.rooms.splice(index, 1);
           }
       }
       users = users.map(user=>{
         if(user.socketid === action.socketid){
-          const index = user.rooms.indexOf("voiceChat");
+          const index = user.rooms.indexOf("videoChat");
           if (index > -1) {
             user.rooms.splice(index, 1);
           }
@@ -215,6 +217,22 @@ const main_reducer = (state = initialstate, action) => {
         return user
       })
       return {...state,user:mainuser,users:users}
+    }
+    case "changeUserPosition":{
+      let users = [...state.users]
+      let userId=action.userId
+      let ch_user
+      users = users.filter(user=>{
+        if(user.socketid===userId){
+          ch_user = user
+          return false
+        }
+        return true
+      })
+      users.unshift(ch_user)
+      console.log(users)
+      return {...state,users:users}
+
     }
     case "EXAMPLE":{
       //console.log(1)

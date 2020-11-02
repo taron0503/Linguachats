@@ -7,7 +7,7 @@
 }
 
 .user_profile_name:after{
-	display: inline-block;
+	/* display: inline-block; */
     width: 0;
     height: 0;
     margin-left: .255em;

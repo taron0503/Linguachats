@@ -11,7 +11,7 @@ export default class Header extends Component{
 	render(){
 		let user = this.props.user
 		let chatRoom = "textChat"
-		if(user.rooms && user.rooms.includes("voiceChat")){
+		if(user.rooms && user.rooms.includes("videoChat")){
 			chatRoom="videoChat"
 		}
 
@@ -20,14 +20,14 @@ export default class Header extends Component{
 			<div>
 					<Navbar className="d-flex d-sm-none pt-0 pb-0" bg="dark" variant="dark">
 				    <Navbar.Brand as={Link} to="/">LinguaChats</Navbar.Brand>
-				    <Nav className="mr-auto" activeKey="/VoiceChat">
+				    <Nav className="mr-auto" activeKey="/VideoChat">
 				      <Link to="/TextChat" className="nav-link">
 				      	<div className={"navLinkItem "+((chatRoom==='textChat') && "navLinkItemSelected")}>
 				      	  <ChatIcon imgsrc={"chat_Icon.png"} size={"20"}/>
 				      	  TextChat
 				      	</div>
 				      </Link>
-				      <Link to="/VoiceChat" className="nav-link">
+				      <Link to="/VideoChat" className="nav-link">
 					  <div className={"navLinkItem "+((chatRoom==='videoChat') && "navLinkItemSelected")}>
 				      		<ChatIcon imgsrc={"videoCall_Icon3.png"} size={"20"}/>
 				      		VideoChat
@@ -42,14 +42,14 @@ export default class Header extends Component{
        <Navbar className="flex-column navbar full_height d-none d-sm-flex mr-0" bg="dark" variant="dark">
 			    <div className = "NavBarHeader">
 				    <Navbar.Brand className="mr-0" as={Link} to="/">LinguaChats</Navbar.Brand>
-				    <Nav activeKey="/VoiceChat">
+				    <Nav activeKey="/VideoChat">
 				      <Link to="/TextChat" className="nav-link">
 					  <div className={"navLinkItem "+(chatRoom==='textChat' && "navLinkItemSelected")}>
 				      	  <ChatIcon imgsrc={"chat_Icon.png"} size={"20"}/>
 				      	  TextChat
 				      	</div>
 				      </Link>
-				      <Link to="/VoiceChat" className="nav-link">
+				      <Link to="/VideoChat" className="nav-link">
 					  <div className={"navLinkItem "+(chatRoom==='videoChat' && "navLinkItemSelected")}>
 				      		<ChatIcon imgsrc={"videoCall_Icon3.png"} size={"20"}/>
 				      		VideoChat

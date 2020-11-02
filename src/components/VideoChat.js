@@ -15,7 +15,7 @@ import socket from "../services/socket.js"
 const {RTCPeerConnection, RTCSessionDescription} = window
 
 
-class VoiceChat extends Component{
+class VideoChat extends Component{
 	constructor(props){
 		super(props)
 		this.localVideo = React.createRef();
@@ -30,15 +30,25 @@ class VoiceChat extends Component{
 
 	componentDidMount=async()=>{
 		let user = this.props.user
-		socket.emit("addUserToVoiceChat",user.socketid)
-		socket.on("send_socketid",(socketid)=>{
-        if(socketid===user.socketid){
-        	socket.emit("addUserToVoiceChat",user.socketid)
-        }
-    })
+		if(user.socketid){
+			this.handleaddUserToVideoChat(user)
+		}else{
+			socket.on('addUser', (user_to_add)=>{
+				//todo: create multiple methods
+				if(user_to_add.socketid===this.props.user.socketid)
+				  this.handleaddUserToVideoChat(user_to_add)
+			})
+		}
+		
+	// 	socket.on("send_socketid",(socketid)=>{
+    //     if(socketid===user.socketid){
+    //     	socket.emit("addUserToVoiceChat",user.socketid)
+    //     }
+	// })
+	
+	
 
     socket.on('deleteUser', (user)=>{
-    	console.log("deleteusercall")
 			this.props.changeStatus(this.props.user.socketid,"free")
 		});
 
@@ -47,8 +57,6 @@ class VoiceChat extends Component{
 		});
 
     socket.on('icecandidate',async (icecandidate)=>{
-    	console.log("getIcecandidate ",this.props.user.name)
-    	console.log(icecandidate)
     	if(this.RemoteDescriptionSetted){
     		// console.log("getIcecandidatePeer",this.props.user.name)
     		this.peerConnection.addIceCandidate(icecandidate)
@@ -70,11 +78,13 @@ class VoiceChat extends Component{
 		});
 
 		socket.on("answer-made", async data => {
-			console.log("answer-made")
 			if(data.status==="reject"){
 				this.props.changeStatus(this.props.user.socketid,"free")
 				this.setState({answer:"denied"})
-    		console.log("rejected")
+    			//console.log("rejected")
+			}else if(data.status==="talking"){
+				this.props.changeStatus(this.props.user.socketid,"free")
+				this.setState({answer:"busy"})
 			}else{
 			 this.props.changeStatus(this.props.user.socketid,"talking")
 	     await this.peerConnection.setRemoteDescription(
@@ -108,7 +118,7 @@ class VoiceChat extends Component{
 	}
 
 	componentWillUnmount=()=>{
-		socket.emit("deleteUserFromVoiceChat",this.props.user.socketid)
+		socket.emit("deleteUserFromVideoChat",this.props.user.socketid)
 		if(this.props.partner)
 			socket.emit("endCall",this.props.partner.socketid)
 		this.closeChat()
@@ -119,17 +129,21 @@ class VoiceChat extends Component{
 		socket.off("endCall")
 		socket.off("videoOffOn")
 		socket.off("no_answer")
+		socket.off(this.handleaddUserToVideoChat)
+	}
+
+	handleaddUserToVideoChat=(user_to_add)=>{
+		socket.emit("addUserToVideoChat",user_to_add.socketid)
 	}
 
 	handleUserItemClick=async (user)=>{
-		if(!(this.props.location.pathname==="/VoiceChat/partner")){
-			this.props.history.push("/VoiceChat/partner")
+		if(!(this.props.location.pathname==="/VideoChat/partner")){
+			this.props.history.push("/VideoChat/partner")
 		}
 		this.endCall(false);
 		let newPartner = this.props.newPartner
 		newPartner(user.socketid)
 		if(isMobile){
-			console.log("Mobile")
 			this.props.toggleMessagesWindow(true)
 			this.props.toggleUsersWindow(false)
 			this.props.toggleHeader(false)
@@ -160,15 +174,15 @@ class VoiceChat extends Component{
 
 		this.peerConnection = new RTCPeerConnection(webex_config)
 		this.peerConnection.ontrack = ({ streams: [stream] })=> {
-			console.log('got track', stream);
+			// console.log('got track', stream);
 	  const remoteVideo = this.remoteVideo.current;
 		 if (remoteVideo) {
 		   remoteVideo.srcObject = stream;
 		 }
     };
     this.peerConnection.onicecandidate = (event) => {
-		  	console.log("onicecandidate+",this.props.user.name)
-		  	console.log(event.candidate)
+		  	// console.log("onicecandidate+",this.props.user.name)
+		  	// console.log(event.candidate)
 			  if (event.candidate) {
 			    socket.emit("icecandidate",{candidate:event.candidate,to:this.props.partner.socketid})
 			  } else {
@@ -294,7 +308,6 @@ class VoiceChat extends Component{
 
 	render(){
 		let partner = this.props.partner
-		console.log(partner)
 		let onBack = "closeChat"
 		return (
 			<React.Fragment>
@@ -344,7 +357,7 @@ const mapStateToProps = (state) => {
 	let WindowToggle = state.WindowToggle
 	state = state.main_reducer
 	let partner = state.users.find(user=>user.socketid===state.user.partnerId)
-	let users = state.users.filter(user=>user.rooms.includes("voiceChat"))
+	let users = state.users.filter(user=>user.rooms.includes("videoChat"))
   return {
   	UsersWindow:WindowToggle.UsersWindow,
   	MessagesWindow:WindowToggle.MessagesWindow,
@@ -355,4 +368,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps,actions)(VoiceChat))
+export default withRouter(connect(mapStateToProps,actions)(VideoChat))

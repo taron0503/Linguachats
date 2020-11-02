@@ -2,7 +2,7 @@ import React, {Component} from "react"
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
-import {Modal,Button,InputGroup,FormControl,FormGroup} from 'react-bootstrap';
+import {Modal,Button} from 'react-bootstrap';
 import socket from "../services/socket.js"
 
 

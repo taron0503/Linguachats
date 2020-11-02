@@ -7,7 +7,6 @@ import {isMobile} from "react-device-detect";
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
-import socket from "../services/socket.js"
 
 class TextChat extends Component{
 

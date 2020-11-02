@@ -67,3 +67,16 @@
   margin-right: 2px;
 }
 
+/* .UserIconWrapper{
+	position: relative;
+}
+
+.UserIconWrapper::before{
+	content:"";
+	position: absolute;
+	height:8px;
+	width: 8px;
+	display: inline-block;
+	border-radius: 50%;
+	background:limegreen;
+} */

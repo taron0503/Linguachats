@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-async function getUser(id){
-    let res = await axios.post(`http://localhost:8080/getUser`, {id:id})
+
+
+async function getUser(){
+    let res = await axios.post(`/getUser`,{},{withCredentials: true})
     if(res.data.user){
         let user = res.data.user
         delete user.__v
@@ -17,21 +19,27 @@ async function getUser(id){
 };
 
 async function saveUser(user){
-    let res = await axios.post(`http://localhost:8080/saveUser`, { user })
+    let res = await axios.post("/saveUser",{user:user},{withCredentials: true})
+    console.log(res.data)
     if(res.data.saved)
-        return res.data.id;
-    return ""
+        return true;
+    return false
 }
 
 async function updateUser(id,user){
-    let res = await axios.post(`http://localhost:8080/updateUser`, { id,user })
+    let res = await axios.post(`/updateUser`, { id,user })
     if(res.data.updated)
         return true
     return false
 }
 
+async function deleteUser(){
+    let res = await axios.post(`/deleteUser`,{}, {withCredentials: true})
+}
+
 export default  {
     getUser:getUser,
     saveUser:saveUser,
-    updateUser:updateUser
+    updateUser:updateUser,
+    deleteUser:deleteUser,
 };

@@ -1,4 +1,4 @@
-import React, {Component, useReducer} from "react"
+import React, {Component} from "react"
 import Header from "./Header"
 import InitialRegModal from "./InitialRegModal"
 import {
@@ -7,14 +7,14 @@ import {
   Redirect 
 } from "react-router-dom";
 import TextChat from './TextChat';
-import VoiceChat from './VoiceChat';
+import VideoChat from './VideoChat';
 import { withRouter} from "react-router";
 // import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import {isMobile} from "react-device-detect";
-import CookieManager from "./Helpers/CookieManager"
 import UserManager from "./Helpers/UserManager"
+import CookeManager from "./Helpers/CookieManager"
 import './main.css';
 
 import socket from "../services/socket.js"
@@ -29,17 +29,23 @@ class Main extends Component{
 		  document.querySelector(':root').style
 		    .setProperty('--vh', window.innerHeight/100 + 'px');
 		})
-
-		let id = CookieManager.getCookie("id")
+		
+		let id = CookeManager.getCookie("id")
 		if(id){
-			UserManager.getUser(id)
+			this.props.turnLoggedIn(true)
+			UserManager.getUser()
 			.then(user=>{
-				this.addUserToChat(user)
-				this.props.turnLoggedIn(true)
+				if(user){
+					this.addUserToChat(user)
+				}else{
+					this.props.turnLoggedIn(false)
+				}
 			})
 		}else{
 			this.props.turnLoggedIn(false)
 		}
+
+		
 	}
 
 
@@ -69,12 +75,16 @@ class Main extends Component{
 			this.props.toggleHeader(true)
 		})
 
-		socket.on("addUserToVoiceChat",(socketid)=>{
-			this.props.addUserToVoiceChat(socketid)
+		socket.on("addUserToVideoChat",(socketid)=>{
+			this.props.addUserToVideoChat(socketid)
 		})
 
-		socket.on("deleteUserFromVoiceChat",socketid=>{
-			this.props.deleteUserFromVoiceChat(socketid)
+		socket.on("deleteUserFromVideoChat",socketid=>{
+			this.props.deleteUserFromVideoChat(socketid)
+		})
+
+		socket.on("changeStatus",({socketid,status})=>{
+			this.props.changeUserStatus(socketid,status)
 		})
 
 		socket.on('send_message', this.handleOnMessage);
@@ -94,25 +104,20 @@ class Main extends Component{
 
 	componentWillUnmount=()=>{
 		socket.off('send_message', this.handleOnMessage);
-		console.log("off_send_message")
 	}
 
 	handleOnMessage=(msg)=>{
-		console.log("newMesaage")
-		console.log(msg)
+		// console.log(msg)
 		this.props.addMessage(msg)
 		this.props.endTyping(msg.sender)
+		this.props.changeUserPosition(msg.sender)
 	}
 
 	handleRegisterConfirmation = async (user)=>{
-		console.log("1")
-		console.log(user)
-		let id = await UserManager.saveUser(user)
-		if(id){
-		    CookieManager.setCookie("id", id, 1000);
+		let saved = await UserManager.saveUser(user)
+		if(saved){
 			this.props.turnLoggedIn(true)
-			// let id = CookieManager.getCookie("id")
-			user = await UserManager.getUser(id)
+			user = await UserManager.getUser()
 			this.addUserToChat(user)
 		}
 	}
@@ -143,7 +148,7 @@ class Main extends Component{
 		socket.emit("get_socketid")
 		socket.off("send_socketid")
 		socket.on("send_socketid",(socketid)=>{
-		user.socketid = socketid
+		  user.socketid = socketid
 		  socket.emit("user_data",user)
 		})
 		this.props.setUser(user) 	
@@ -162,14 +167,14 @@ class Main extends Component{
 				    </div>
 				    <div className="col-sm-10">
 					    <Switch>
-				          <Route path="/TextChat">
+				          <Route path="/TextChat" addUserToChat={this.addUserToChat}>
 				            <TextChat />
 				          </Route>
-				          <Route path="/VoiceChat">
-				            <VoiceChat />
+				          <Route path="/VideoChat">
+				            <VideoChat />
 				          </Route>
 				          <Route path="/">
-				            <Redirect to="/TextChat" />
+				            <Redirect to="/TextChat" addUserToChat={this.addUserToChat}/>
 				          </Route>  
 				      </Switch>
 				    </div>

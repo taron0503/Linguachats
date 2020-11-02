@@ -66,33 +66,30 @@ io.on('connection', (socket) => {
   })
 
   socket.on("user_data", user_data=>{
-    // console.log(Date.now())
     user_data.time = Date.now()
   	clients.unshift(user_data)
-  	// socket.emit("addUser",user_data)
-    // user_data.time = Date.now()
   	io.emit("addUser",user_data)
   })
 
-  socket.on("addUserToVoiceChat",socketid=>{
+  socket.on("addUserToVideoChat",socketid=>{
     console.log(socketid)
     clients.forEach(client=>{
       if(client.socketid == socketid)
-        client.rooms.push("voiceChat")
+        client.rooms.push("videoChat")
     })
-    io.emit("addUserToVoiceChat",socketid)
+    io.emit("addUserToVideoChat",socketid)
   })
 
-  socket.on("deleteUserFromVoiceChat", socketid=>{
+  socket.on("deleteUserFromVideoChat", socketid=>{
     clients.forEach(client=>{
       if(client.socketid == socketid){
-        const index = client.rooms.indexOf("voiceChat");
+        const index = client.rooms.indexOf("videoChat");
           if (index > -1) {
             client.rooms.splice(index, 1);
           }
       }
     })
-    io.emit("deleteUserFromVoiceChat",socketid)
+    io.emit("deleteUserFromVideoChat",socketid)
   })
 
   socket.on("startTyping",data=>{
@@ -105,6 +102,12 @@ io.on('connection', (socket) => {
   
   socket.on("call-user", data => {
     console.log("call-user")
+    let call_receiver = clients.find(client=>client.socketid===data.to)
+    if(call_receiver && call_receiver.status==="talking"){
+      socket.emit("answer-made",{status:"talking"})
+    }
+
+
    socket.to(data.to).emit("call-made", {
      offer: data.offer,
      socket: socket.id
@@ -133,12 +136,14 @@ io.on('connection', (socket) => {
      socket.to(data.to).emit("icecandidate",data.candidate);
   })
 
-  socket.on("changeStatus",status=>{
+  socket.on("changeStatus",({socketid,status})=>{
+    console.log(socketid)
+    console.log(status)
     clients.forEach(client=>{
-      if(client.socketid==socket.id)
+      if(client.socketid==socketid)
         client.status=status
     })
-    io.emit("changeStatus",{socketid:socket.id,status:status})
+    socket.broadcast.emit("changeStatus",{socketid:socketid,status:status})
   })
 
   socket.on("videoOffOn",data=>{

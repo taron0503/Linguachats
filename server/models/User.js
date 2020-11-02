@@ -9,7 +9,10 @@ const userScheme = new Schema({
     country:String,
     profile_image_src:String,
     speaks:[String],
-    learns:[String]
+    learns:[String],
+    createdAt: {type: Date, default: Date.now},
+    lastVisit: {type: String}
 });
+
 
 module.exports = mongoose.model("User", userScheme)

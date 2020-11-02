@@ -46,7 +46,7 @@ class ProfileDropdown extends Component{
 	  }),
 	  valueContainer:(provided)=>({
 	  	...provided,
-	  	padding:"0"
+	  	padding:"4px"
 	  }),
 	  indicatorSeparator:(provided)=>({
 	  	...provided,
@@ -62,7 +62,8 @@ class ProfileDropdown extends Component{
 	  	<div className={styles.UsersSortDropdown}>
 	  		<span>Sort By</span>
 	  		<Select 
-	  		styles = { customStyles }
+			  styles = { customStyles }
+			  isSearchable={false}
 	  		options={this.options}
 	  		defaultValue={this.state.sortField}
 	  		onChange = {(e)=>{this.handleChange(e,false)}}

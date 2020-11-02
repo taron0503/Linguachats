@@ -79,7 +79,7 @@ class MessagesWindow extends Component{
 		let partner = this.props.partner
 		let user = this.props.user
 		let chatRoom = "textChat"
-		if(user.rooms && user.rooms.includes("voiceChat")){
+		if(user.rooms && user.rooms.includes("videoChat")){
 			chatRoom="videoChat"
 		}
 		let MWbodyHeight = "calc(100 * var(--vh,1vh) - 37px - 44px)"//isMobile?"calc(100% - 37px - 44px)":"calc(100% - 37px - 44px)"
@@ -101,7 +101,7 @@ class MessagesWindow extends Component{
 				</div>
 				<div style = {{height:MWbodyHeight}} className={"MWbody " + (isMobile && "MWbodyM")}>
 				{this.props.children}
-				<ScrollToBottom className={"messagesContainer Cscroll "+(chatRoom==="videoChat" && "messagesContainerM")}>
+				<ScrollToBottom className={"messagesContainer Cscroll "+((isMobile && chatRoom==="videoChat") && "messagesContainerM")}>
 					{partner.typing &&
 						<div className = "chatMessageL">
 								<div className="message_sender_name">

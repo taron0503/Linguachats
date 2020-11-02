@@ -3,6 +3,8 @@ const User = require("./models/User")
 const router = express.Router()
 const path = require('path');
 const sanitizeHtml = require("sanitize-html")
+var moment = require('moment');
+
 
 router.post("/saveUser", async (req, res) => {
     try{
@@ -16,12 +18,13 @@ router.post("/saveUser", async (req, res) => {
             country:user.country,
             profile_image_src:user.profile_image_src,
             learns:user.learns,
-            speaks:user.speaks
+            speaks:user.speaks,
         }
         user = new User(user)
         let savedUser = await user.save()
         if(savedUser && savedUser._id){
-            res.send({saved:true,id:savedUser._id})
+            res.cookie("id",savedUser._id.toString(),{expires: new Date(Date.now() + 3600 * 1000 * 24 * 365)})
+            res.send({saved:true})
         }
     }catch(e){
         console.log(e)
@@ -31,10 +34,15 @@ router.post("/saveUser", async (req, res) => {
 
 router.post("/getUser", async (req, res) => {
     try{
-        console.log(req.body)
-        const user = await User.findOne({ _id: req.body.id })
-        console.log(user)
-        res.send({user:user})
+        const user = await User.findOne({ _id: req.cookies.id })
+        // console.log(user)
+        if(user){
+          
+          await User.findOneAndUpdate({ _id: req.cookies.id },{lastVisit:moment().format()})
+          res.send({user:user})
+        }else{
+          res.send({error:"notFound"})   
+        }  
     }catch{
         res.status(404)
         res.send({error:"notFound"})
@@ -57,7 +65,7 @@ router.post("/updateUser", async (req, res) => {
 
 router.post("/deleteUser", async (req, res) => {
     try {
-      await User.deleteOne({ _id: req.params.id })
+      await User.deleteOne({ _id: req.cookies.id })
       res.status(204).send()
     } catch {
       res.status(404)
@@ -66,9 +74,10 @@ router.post("/deleteUser", async (req, res) => {
   })
 
 router.get('*', (req, res) => {
-    console.log(__dirname)
+    // console.log(__dirname)
     // res.sendFile(__dirname + '/public/index.html');
     res.sendFile('index.html', { root: path.join(__dirname, '../build') })
   });
+
 
 module.exports = router

@@ -5,6 +5,7 @@ import {Dropdown} from 'react-bootstrap';
 import {isMobile} from "react-device-detect";
 import UserIcon from "../UserIcon";
 import CookieManager from "../Helpers/CookieManager"
+import UserManager from "../Helpers/UserManager"
 import styles from "./style.module.css"
 
 
@@ -25,7 +26,8 @@ class ProfileDropdown extends Component{
  		this.props.toggleInitRegToEdit(true)
  	}
 
- 	handleLogOut=()=>{
+ 	handleLogOut=async()=>{
+		await UserManager.deleteUser()
 		CookieManager.deleteCookie("id")
  		window.location.href = '/';
  	}
@@ -51,7 +53,7 @@ class ProfileDropdown extends Component{
 const mapStateToProps = (state) => {
   state = state.main_reducer
   return {
-    showInitReg:state.showInitReg
+	showInitReg:state.showInitReg,
   };
 };
 

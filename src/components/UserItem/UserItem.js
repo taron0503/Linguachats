@@ -22,7 +22,7 @@ export default class UsersItem extends Component{
 		return (
 	    		<div className="row no-gutter user_row" onClick={handleClick} style={style}>
 	    		    <div className="col-sm-2 col-2 ">
-		    		  <UserIcon size="50" img={user.img}/>
+		    		  		<UserIcon size="50" img={user.img} status={user.status}/>
 	    			</div>
 	    		    <div className="col-10 col-sm-6">
 				      <div style={{"fontWeight":"600"}}>{/*symbol+" "+*/user.fullname+" "}

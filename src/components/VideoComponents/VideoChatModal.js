@@ -7,10 +7,6 @@ import {isMobile} from "react-device-detect";
 import "./style.css"
 
 export default class VideoChatModal extends Component{
-	constructor(props){
-		super(props)
-		
-	}
 
 	render(){
 		let partner = this.props.partner

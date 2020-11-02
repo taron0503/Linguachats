@@ -13,22 +13,21 @@ class ChatIcon extends Component{
 
   newMessageIcon=styled.div`
 		position: absolute;
-		left:13px;
-		width:15px;
-		height: 15px;
+		left:11px;
+		width:12px;
+		height: 12px;
 		float: right;
 		background-color: red;
 		border-radius: 50%;
 		text-align: center;
 		color: white;
-		font-size: 11px;
+		font-size: 10px;
 		font-weight: bold; 
 	`
 	render(){
-		let unread_messages=this.props.unread_messages?this.props.unread_messages:0
-    let imgsrc=this.props.imgsrc
-	  let img = require("../images/"+imgsrc)
-	  let size = this.props.size;	
+	    let unread_messages=this.props.unread_messages?this.props.unread_messages:0
+        let imgsrc=this.props.imgsrc
+	    let img = require("../images/"+imgsrc)	
 		return(			
 		    <this.chatIconWrapper style={this.props.styles}>
 					{unread_messages>0 && <this.newMessageIcon>{unread_messages}</this.newMessageIcon>}
