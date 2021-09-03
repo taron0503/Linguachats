@@ -13,7 +13,7 @@
     "emoji-mart": "^3.0.0",
     "formik": "^2.1.4",
     "history": "^5.0.0",
-    "immer": "^6.0.9",
+    "immer": "^9.0.6",
     "immutability-helper": "^3.0.2",
     "jquery": "^3.5.1",
     "react": "^16.13.1",
